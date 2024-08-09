@@ -1,2 +1,8 @@
 // Import all of Bootstrap's CSS
 @import "bootstrap/scss/bootstrap";
+
+// custom
+body {
+  height: 100vh;
+  background-color: #fafafa;
+}

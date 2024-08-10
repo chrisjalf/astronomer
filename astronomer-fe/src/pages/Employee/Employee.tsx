@@ -1,16 +1,26 @@
-import { useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 
-const defaultEmployee = {
+const initialEmployee: {
+  name: string;
+  department: string;
+  active: boolean;
+  number?: number;
+  email: string;
+  address: string[];
+  photo?: File;
+} = {
   name: "",
   department: "",
   active: false,
   number: undefined,
   email: "",
   address: ["", "", ""],
+  photo: undefined,
 };
 
 export default function Employee() {
-  const [employee, setEmployee] = useState(defaultEmployee);
+  const [employee, setEmployee] = useState(initialEmployee);
+  const photoInputRef = useRef<HTMLInputElement>(null);
 
   function handleEmployeeChange(
     employeeItem: string,
@@ -24,24 +34,30 @@ export default function Employee() {
     });
   }
 
-  /* function toggleEmployeeStatus() {
-    setEmployee((prevEmployee) => {
-      return {
-        ...prevEmployee,
-        active: !prevEmployee.active,
-      };
-    });
-  } */
+  function handleEmployeePhoto(event: ChangeEvent<HTMLInputElement>) {
+    const file =
+      event.target.files && event.target.files.length > 0
+        ? event.target.files[0]
+        : undefined;
 
-  /* function resetEmployee() {
-    setEmployee(defaultEmployee);
-  } */
+    if (file) {
+      setEmployee((prevEmployee) => {
+        return {
+          ...prevEmployee,
+          photo: file,
+        };
+      });
+    }
+  }
+
+  function clearEmployee() {
+    setEmployee(initialEmployee);
+
+    if (photoInputRef.current) photoInputRef.current.value = "";
+  }
 
   return (
     <div className="container-sm card mt-5">
-      {/* He */}
-      {`${employee.active}`}
-      {/* llo */}
       <div className="row p-4">
         <div className="col-md-6">
           <div className="mb-3">
@@ -122,6 +138,40 @@ export default function Employee() {
             <input type="text" className="form-control mb-2" />
             <input type="text" className="form-control" />
           </div>
+        </div>
+        {employee.photo ? (
+          <div className="col-md-6">
+            <div className="mb-3">Photo</div>
+            <img
+              src={URL.createObjectURL(employee.photo)}
+              className="img-thumbnail"
+              alt="employee-image"
+            ></img>
+          </div>
+        ) : null}
+        <div className="col-md-6">
+          <div className="mb-3">
+            <label className="form-label">Upload Photo</label>
+            <input
+              type="file"
+              accept="image/*"
+              className="form-control"
+              onChange={(event) => handleEmployeePhoto(event)}
+              ref={photoInputRef}
+            />
+          </div>
+        </div>
+        <div className="col-md-12 text-end">
+          <button
+            className="btn btn-secondary"
+            type="reset"
+            onClick={clearEmployee}
+          >
+            Clear
+          </button>
+          <button className="btn btn-primary ms-2" type="submit">
+            Create
+          </button>
         </div>
       </div>
     </div>

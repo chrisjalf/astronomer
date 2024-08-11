@@ -1,40 +1,15 @@
 import { ChangeEvent, useRef, useState } from "react";
 
-const initialEmployee: {
-  name: string;
-  department: string;
-  active: boolean;
-  number?: number;
-  email: string;
-  address: string[];
-  photo?: File;
-} = {
-  name: "",
-  department: "",
-  active: false,
-  number: undefined,
-  email: "",
-  address: ["", "", ""],
-  photo: undefined,
-};
-
 export default function Employee() {
-  const [employee, setEmployee] = useState(initialEmployee);
   const employeeNameRef = useRef<HTMLInputElement>(null);
   const employeeDepartmentRef = useRef<HTMLSelectElement>(null);
-  const photoInputRef = useRef<HTMLInputElement>(null);
-
-  function handleEmployeeChange(
-    employeeItem: string,
-    newValue: string | number | boolean
-  ) {
-    setEmployee((prevEmployee) => {
-      return {
-        ...prevEmployee,
-        [employeeItem]: newValue,
-      };
-    });
-  }
+  const employeeActiveRef = useRef<HTMLInputElement>(null);
+  const employeeNumberRef = useRef<HTMLInputElement>(null);
+  const employeeEmailRef = useRef<HTMLInputElement>(null);
+  const employeeAddress1Ref = useRef<HTMLInputElement>(null);
+  const employeeAddress2Ref = useRef<HTMLInputElement>(null);
+  const employeePhotoRef = useRef<HTMLInputElement>(null);
+  const [photo, setEmployeePhoto] = useState<File | undefined>(undefined);
 
   function handleEmployeePhoto(event: ChangeEvent<HTMLInputElement>) {
     const file =
@@ -42,24 +17,28 @@ export default function Employee() {
         ? event.target.files[0]
         : undefined;
 
-    if (file) {
-      setEmployee((prevEmployee) => {
-        return {
-          ...prevEmployee,
-          photo: file,
-        };
-      });
-    }
+    if (file) setEmployeePhoto(file);
   }
 
+  // reset employee form
   function clearEmployee() {
-    setEmployee(initialEmployee);
+    if (employeeNameRef.current) employeeNameRef.current.value = "";
+    if (employeeDepartmentRef.current) employeeDepartmentRef.current.value = "";
+    if (employeeActiveRef.current) employeeActiveRef.current.checked = false;
+    if (employeeNumberRef.current) employeeNumberRef.current.value = "";
+    if (employeeEmailRef.current) employeeEmailRef.current.value = "";
+    if (employeeAddress1Ref.current) employeeAddress1Ref.current.value = "";
+    if (employeeAddress2Ref.current) employeeAddress2Ref.current.value = "";
+    if (employeePhotoRef.current) employeePhotoRef.current.value = "";
 
-    if (photoInputRef.current) photoInputRef.current.value = "";
+    setEmployeePhoto(undefined);
   }
 
   function trigger() {
     console.log(employeeDepartmentRef?.current?.value);
+    console.log(employeeActiveRef?.current?.checked);
+    console.log(employeeNumberRef?.current?.value);
+    console.log(employeeEmailRef?.current?.value);
   }
 
   return (
@@ -74,13 +53,10 @@ export default function Employee() {
         <div className="col-md-6">
           <div className="mb-3">
             <label className="form-label">Department</label>
-            <select
-              className="form-select"
-              /* value={employeeDepartment}
-              onChange={(event) => changeEmployeeDepartment(event.target.value)} */
-              ref={employeeDepartmentRef}
-            >
-              <option hidden value="">Please select a department</option>
+            <select className="form-select" ref={employeeDepartmentRef}>
+              <option hidden value="">
+                Please select a department
+              </option>
               <option value="IT">IT</option>
               <option value="Finance">Finance</option>
               <option value="Security">Security</option>
@@ -94,10 +70,7 @@ export default function Employee() {
               <input
                 className="form-check-input"
                 type="checkbox"
-                checked={employee.active}
-                onChange={() =>
-                  handleEmployeeChange("active", !employee.active)
-                }
+                ref={employeeActiveRef}
               />
               <label className="form-check-label">Active</label>
             </div>
@@ -109,10 +82,7 @@ export default function Employee() {
             <input
               type="number"
               className="form-control"
-              value={employee.number}
-              onChange={(event) =>
-                handleEmployeeChange("number", event.target.value)
-              }
+              ref={employeeNumberRef}
             />
           </div>
         </div>
@@ -122,26 +92,31 @@ export default function Employee() {
             <input
               type="email"
               className="form-control"
-              value={employee.email}
-              onChange={(event) =>
-                handleEmployeeChange("email", event.target.value)
-              }
+              ref={employeeEmailRef}
             />
           </div>
         </div>
         <div className="col-md-6">
           <div className="mb-3">
-            <label className="form-label">Address</label>
-            <input type="text" className="form-control mb-2" />
-            <input type="text" className="form-control mb-2" />
-            <input type="text" className="form-control" />
+            <label className="form-label">Address line 1</label>
+            <input
+              type="text"
+              className="form-control mb-2"
+              ref={employeeAddress1Ref}
+            />
+            <label className="form-label">Address line 2 (optional)</label>
+            <input
+              type="text"
+              className="form-control"
+              ref={employeeAddress2Ref}
+            />
           </div>
         </div>
-        {employee.photo ? (
+        {photo ? (
           <div className="col-md-6">
             <div className="mb-3">Photo</div>
             <img
-              src={URL.createObjectURL(employee.photo)}
+              src={URL.createObjectURL(photo)}
               className="img-thumbnail"
               alt="employee-image"
             ></img>
@@ -155,7 +130,7 @@ export default function Employee() {
               accept="image/*"
               className="form-control"
               onChange={(event) => handleEmployeePhoto(event)}
-              ref={photoInputRef}
+              ref={employeePhotoRef}
             />
           </div>
         </div>

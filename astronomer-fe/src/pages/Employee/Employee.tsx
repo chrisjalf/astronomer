@@ -40,22 +40,58 @@ export default function Employee() {
     if (file) setEmployeePhoto(file);
   }
 
-  // reset employee form & its error
-  function clearEmployee() {
-    if (employeeNameRef.current) employeeNameRef.current.value = "";
-    if (employeeDepartmentRef.current) employeeDepartmentRef.current.value = "";
-    if (employeeActiveRef.current) employeeActiveRef.current.checked = false;
-    if (employeeNumberRef.current) employeeNumberRef.current.value = "";
-    if (employeeEmailRef.current) employeeEmailRef.current.value = "";
-    if (employeeAddress1Ref.current) employeeAddress1Ref.current.value = "";
-    if (employeeAddress2Ref.current) employeeAddress2Ref.current.value = "";
-    if (employeePhotoRef.current) employeePhotoRef.current.value = "";
+  function validateEmployeeInput(fieldName: string) {
+    let errorMessage: string | undefined;
 
-    setEmployeePhoto(undefined);
-    setEmployeeError(initialEmployeeError);
+    switch (fieldName) {
+      case "name": {
+        if (employeeNameRef?.current?.value === "")
+          errorMessage = "Name is required";
+        else errorMessage = undefined;
+
+        break;
+      }
+      case "department": {
+        if (employeeDepartmentRef?.current?.value === "")
+          errorMessage = "Department is required";
+        else errorMessage = undefined;
+
+        break;
+      }
+      case "number": {
+        if (employeeNumberRef?.current?.value === "")
+          errorMessage = "Number is required";
+        else errorMessage = undefined;
+
+        break;
+      }
+      case "email": {
+        if (employeeEmailRef?.current?.value === "")
+          errorMessage = "Email is required";
+        else errorMessage = undefined;
+
+        break;
+      }
+      case "address": {
+        if (employeeAddress1Ref?.current?.value === "")
+          errorMessage = "Address is required";
+        else errorMessage = undefined;
+
+        break;
+      }
+      default:
+        break;
+    }
+
+    setEmployeeError((prevEmployeeError) => {
+      return {
+        ...prevEmployeeError,
+        [fieldName]: errorMessage,
+      };
+    });
   }
 
-  function trigger() {
+  function checkEmployee() {
     const error: EmployeeFormError = {};
 
     if (employeeNameRef?.current?.value === "")
@@ -81,6 +117,25 @@ export default function Employee() {
     setEmployeeError(error);
   }
 
+  // reset employee form & its error
+  function clearEmployee() {
+    if (employeeNameRef.current) employeeNameRef.current.value = "";
+    if (employeeDepartmentRef.current) employeeDepartmentRef.current.value = "";
+    if (employeeActiveRef.current) employeeActiveRef.current.checked = false;
+    if (employeeNumberRef.current) employeeNumberRef.current.value = "";
+    if (employeeEmailRef.current) employeeEmailRef.current.value = "";
+    if (employeeAddress1Ref.current) employeeAddress1Ref.current.value = "";
+    if (employeeAddress2Ref.current) employeeAddress2Ref.current.value = "";
+    if (employeePhotoRef.current) employeePhotoRef.current.value = "";
+
+    setEmployeePhoto(undefined);
+    setEmployeeError(initialEmployeeError);
+  }
+
+  function trigger() {
+    checkEmployee();
+  }
+
   return (
     <div className="container-sm card mt-5">
       <div className="row p-4">
@@ -90,6 +145,8 @@ export default function Employee() {
             <input
               type="text"
               className={`form-control ${employeeError.name && "is-invalid"}`}
+              onFocus={() => validateEmployeeInput("name")}
+              onChange={() => validateEmployeeInput("name")}
               ref={employeeNameRef}
             />
             {employeeError.name && (
@@ -104,6 +161,8 @@ export default function Employee() {
               className={`form-select ${
                 employeeError.department && "is-invalid"
               }`}
+              onFocus={() => validateEmployeeInput("department")}
+              onChange={() => validateEmployeeInput("department")}
               ref={employeeDepartmentRef}
             >
               <option hidden value="">
@@ -137,6 +196,8 @@ export default function Employee() {
             <input
               type="number"
               className={`form-control ${employeeError.number && "is-invalid"}`}
+              onFocus={() => validateEmployeeInput("number")}
+              onChange={() => validateEmployeeInput("number")}
               ref={employeeNumberRef}
             />
             {employeeError.number && (
@@ -150,6 +211,8 @@ export default function Employee() {
             <input
               type="email"
               className={`form-control ${employeeError.email && "is-invalid"}`}
+              onFocus={() => validateEmployeeInput("email")}
+              onChange={() => validateEmployeeInput("email")}
               ref={employeeEmailRef}
             />
             {employeeError.email && (
@@ -162,10 +225,17 @@ export default function Employee() {
             <label className="form-label">Address line 1</label>
             <input
               type="text"
-              className="form-control mb-2"
+              className={`form-control ${
+                employeeError.address && "is-invalid"
+              }`}
+              onFocus={() => validateEmployeeInput("address")}
+              onChange={() => validateEmployeeInput("address")}
               ref={employeeAddress1Ref}
             />
-            <label className="form-label">Address line 2 (optional)</label>
+            {employeeError.address && (
+              <div className="invalid-feedback">{employeeError.address}</div>
+            )}
+            <label className="form-label mt-2">Address line 2 (optional)</label>
             <input
               type="text"
               className="form-control"
@@ -173,7 +243,7 @@ export default function Employee() {
             />
           </div>
         </div>
-        {photo ? (
+        {photo && (
           <div className="col-md-6">
             <div className="mb-3">Photo</div>
             <img
@@ -182,7 +252,7 @@ export default function Employee() {
               alt="employee-image"
             ></img>
           </div>
-        ) : null}
+        )}
         <div className="col-md-6">
           <div className="mb-3">
             <label className="form-label">Upload Photo</label>

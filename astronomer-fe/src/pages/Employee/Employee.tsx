@@ -1,6 +1,23 @@
 import { ChangeEvent, useRef, useState } from "react";
 
+type EmployeeFormError = {
+  name?: string;
+  department?: string;
+  number?: string;
+  email?: string;
+  address?: string;
+};
+
+const initialEmployeeError: EmployeeFormError = {
+  name: undefined,
+  department: undefined,
+  number: undefined,
+  email: undefined,
+  address: undefined,
+};
+
 export default function Employee() {
+  // employee form fields
   const employeeNameRef = useRef<HTMLInputElement>(null);
   const employeeDepartmentRef = useRef<HTMLSelectElement>(null);
   const employeeActiveRef = useRef<HTMLInputElement>(null);
@@ -11,6 +28,9 @@ export default function Employee() {
   const employeePhotoRef = useRef<HTMLInputElement>(null);
   const [photo, setEmployeePhoto] = useState<File | undefined>(undefined);
 
+  // employee form error
+  const [employeeError, setEmployeeError] = useState(initialEmployeeError);
+
   function handleEmployeePhoto(event: ChangeEvent<HTMLInputElement>) {
     const file =
       event.target.files && event.target.files.length > 0
@@ -20,7 +40,7 @@ export default function Employee() {
     if (file) setEmployeePhoto(file);
   }
 
-  // reset employee form
+  // reset employee form & its error
   function clearEmployee() {
     if (employeeNameRef.current) employeeNameRef.current.value = "";
     if (employeeDepartmentRef.current) employeeDepartmentRef.current.value = "";
@@ -32,13 +52,33 @@ export default function Employee() {
     if (employeePhotoRef.current) employeePhotoRef.current.value = "";
 
     setEmployeePhoto(undefined);
+    setEmployeeError(initialEmployeeError);
   }
 
   function trigger() {
-    console.log(employeeDepartmentRef?.current?.value);
-    console.log(employeeActiveRef?.current?.checked);
-    console.log(employeeNumberRef?.current?.value);
-    console.log(employeeEmailRef?.current?.value);
+    const error: EmployeeFormError = {};
+
+    if (employeeNameRef?.current?.value === "")
+      error["name"] = "Name is required";
+    else error["name"] = undefined;
+
+    if (employeeDepartmentRef?.current?.value === "")
+      error["department"] = "Department is required";
+    else error["department"] = undefined;
+
+    if (employeeNumberRef?.current?.value === "")
+      error["number"] = "Number is required";
+    else error["number"] = undefined;
+
+    if (employeeEmailRef?.current?.value === "")
+      error["email"] = "Email is required";
+    else error["email"] = undefined;
+
+    if (employeeAddress1Ref?.current?.value === "")
+      error["address"] = "Address is required";
+    else error["address"] = undefined;
+
+    setEmployeeError(error);
   }
 
   return (
@@ -47,13 +87,25 @@ export default function Employee() {
         <div className="col-md-6">
           <div className="mb-3">
             <label className="form-label">Name</label>
-            <input type="text" className="form-control" ref={employeeNameRef} />
+            <input
+              type="text"
+              className={`form-control ${employeeError.name && "is-invalid"}`}
+              ref={employeeNameRef}
+            />
+            {employeeError.name && (
+              <div className="invalid-feedback">{employeeError.name}</div>
+            )}
           </div>
         </div>
         <div className="col-md-6">
           <div className="mb-3">
             <label className="form-label">Department</label>
-            <select className="form-select" ref={employeeDepartmentRef}>
+            <select
+              className={`form-select ${
+                employeeError.department && "is-invalid"
+              }`}
+              ref={employeeDepartmentRef}
+            >
               <option hidden value="">
                 Please select a department
               </option>
@@ -61,6 +113,9 @@ export default function Employee() {
               <option value="Finance">Finance</option>
               <option value="Security">Security</option>
             </select>
+            {employeeError.department && (
+              <div className="invalid-feedback">{employeeError.department}</div>
+            )}
           </div>
         </div>
         <div className="col-md-6">
@@ -81,9 +136,12 @@ export default function Employee() {
             <label className="form-label">Number</label>
             <input
               type="number"
-              className="form-control"
+              className={`form-control ${employeeError.number && "is-invalid"}`}
               ref={employeeNumberRef}
             />
+            {employeeError.number && (
+              <div className="invalid-feedback">{employeeError.number}</div>
+            )}
           </div>
         </div>
         <div className="col-md-6">
@@ -91,9 +149,12 @@ export default function Employee() {
             <label className="form-label">Email</label>
             <input
               type="email"
-              className="form-control"
+              className={`form-control ${employeeError.email && "is-invalid"}`}
               ref={employeeEmailRef}
             />
+            {employeeError.email && (
+              <div className="invalid-feedback">{employeeError.email}</div>
+            )}
           </div>
         </div>
         <div className="col-md-6">

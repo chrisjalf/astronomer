@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 type EmployeeFormError = {
   name?: string;
@@ -27,6 +27,7 @@ export default function Employee() {
   const employeeAddress2Ref = useRef<HTMLInputElement>(null);
   const employeePhotoRef = useRef<HTMLInputElement>(null);
   const [photo, setEmployeePhoto] = useState<File | undefined>(undefined);
+  const [didClickCreateEmployee, setDidClickCreateEmployee] = useState(false);
 
   // employee form error
   const [employeeError, setEmployeeError] = useState(initialEmployeeError);
@@ -132,9 +133,23 @@ export default function Employee() {
     setEmployeeError(initialEmployeeError);
   }
 
-  function trigger() {
+  function createEmployee() {
     checkEmployee();
+
+    setDidClickCreateEmployee(true);
   }
+
+  // side effects from creating employee
+  useEffect(() => {
+    if (
+      didClickCreateEmployee &&
+      Object.values(employeeError).every((val) => val === undefined)
+    ) {
+      console.log("Employee created!");
+    }
+
+    setDidClickCreateEmployee(false);
+  }, [didClickCreateEmployee, employeeError]);
 
   return (
     <div className="container-sm card mt-5">
@@ -276,7 +291,7 @@ export default function Employee() {
           <button
             className="btn btn-primary ms-2"
             type="submit"
-            onClick={trigger}
+            onClick={createEmployee}
           >
             Create
           </button>

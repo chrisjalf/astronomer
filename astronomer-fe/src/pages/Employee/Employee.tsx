@@ -20,6 +20,8 @@ const initialEmployee: {
 
 export default function Employee() {
   const [employee, setEmployee] = useState(initialEmployee);
+  const employeeNameRef = useRef<HTMLInputElement>(null);
+  const employeeDepartmentRef = useRef<HTMLSelectElement>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
 
   function handleEmployeeChange(
@@ -56,20 +58,17 @@ export default function Employee() {
     if (photoInputRef.current) photoInputRef.current.value = "";
   }
 
+  function trigger() {
+    console.log(employeeDepartmentRef?.current?.value);
+  }
+
   return (
     <div className="container-sm card mt-5">
       <div className="row p-4">
         <div className="col-md-6">
           <div className="mb-3">
             <label className="form-label">Name</label>
-            <input
-              type="text"
-              className="form-control"
-              value={employee.name}
-              onChange={(event) =>
-                handleEmployeeChange("name", event.target.value)
-              }
-            />
+            <input type="text" className="form-control" ref={employeeNameRef} />
           </div>
         </div>
         <div className="col-md-6">
@@ -77,12 +76,11 @@ export default function Employee() {
             <label className="form-label">Department</label>
             <select
               className="form-select"
-              value={employee.department}
-              onChange={(event) =>
-                handleEmployeeChange("department", event.target.value)
-              }
+              /* value={employeeDepartment}
+              onChange={(event) => changeEmployeeDepartment(event.target.value)} */
+              ref={employeeDepartmentRef}
             >
-              <option hidden>Please select a department</option>
+              <option hidden value="">Please select a department</option>
               <option value="IT">IT</option>
               <option value="Finance">Finance</option>
               <option value="Security">Security</option>
@@ -169,7 +167,11 @@ export default function Employee() {
           >
             Clear
           </button>
-          <button className="btn btn-primary ms-2" type="submit">
+          <button
+            className="btn btn-primary ms-2"
+            type="submit"
+            onClick={trigger}
+          >
             Create
           </button>
         </div>

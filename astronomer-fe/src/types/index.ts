@@ -1,9 +1,4 @@
-import { EmployeePartial, EmployeeFull, EmployeeContextType } from "./Employee";
+import { Employee, EmployeeContextType } from "./Employee";
 import { EmployeeFormError } from "./Error";
 
-export type {
-  EmployeePartial,
-  EmployeeFull,
-  EmployeeContextType,
-  EmployeeFormError,
-};
+export type { Employee, EmployeeContextType, EmployeeFormError };

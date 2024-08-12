@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { EmployeeContext } from "../../store/index";
 
 export default function EmployeeList() {
-  const { employees } = useContext(EmployeeContext);
+  const { employees, selectEmployee } = useContext(EmployeeContext);
 
   return (
     <div className="container my-5">
@@ -33,7 +33,11 @@ export default function EmployeeList() {
                     <button type="button" className="btn btn-primary">
                       View
                     </button>
-                    <button type="button" className="btn btn-warning">
+                    <button
+                      type="button"
+                      className="btn btn-warning"
+                      onClick={() => selectEmployee(employee)}
+                    >
                       Edit
                     </button>
                     <button type="button" className="btn btn-danger">

@@ -1,13 +1,7 @@
-export type EmployeePartial = {
+export type Employee = {
   name: string;
   department: string;
-  status: string;
-};
-
-export type EmployeeFull = {
-  name: string;
-  department: string;
-  status: string;
+  status: "Active" | "Inactive";
   number: number;
   email: string;
   address1: string;
@@ -16,6 +10,8 @@ export type EmployeeFull = {
 };
 
 export type EmployeeContextType = {
-  employees: EmployeePartial[];
-  createEmployee: (employee: EmployeeFull) => void;
+  employees: Employee[];
+  selectedEmployee?: Employee;
+  createEmployee: (employee: Employee) => void;
+  selectEmployee: (employee?: Employee) => void;
 };

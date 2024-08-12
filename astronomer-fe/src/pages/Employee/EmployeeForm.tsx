@@ -1,7 +1,7 @@
 import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 
 import { EmployeeContext } from "../../store/index";
-import { EmployeeFull, EmployeeFormError } from "../../types/index";
+import { Employee, EmployeeFormError } from "../../types/index";
 
 const initialEmployeeError: EmployeeFormError = {
   name: undefined,
@@ -37,7 +37,8 @@ export default function EmployeeForm() {
   }
 
   // context
-  const { createEmployee } = useContext(EmployeeContext);
+  const { selectedEmployee, createEmployee, selectEmployee } =
+    useContext(EmployeeContext);
 
   function validateEmployeeInput(fieldName: string) {
     let errorMessage: string | undefined;
@@ -129,6 +130,8 @@ export default function EmployeeForm() {
 
     setEmployeePhoto(undefined);
     setEmployeeError(initialEmployeeError);
+
+    if (selectedEmployee !== undefined) selectEmployee(undefined);
   }
 
   function handleCreateEmployee() {
@@ -143,7 +146,7 @@ export default function EmployeeForm() {
       didClickCreateEmployee &&
       Object.values(employeeError).every((val) => val === undefined)
     ) {
-      const employee: EmployeeFull = {
+      const employee: Employee = {
         name: employeeNameRef.current!.value,
         department: employeeDepartmentRef.current!.value,
         status:
@@ -160,10 +163,22 @@ export default function EmployeeForm() {
     setDidClickCreateEmployee(false);
   }, [didClickCreateEmployee, employeeError, createEmployee]);
 
+  // side effects from selecting employee for edit
+  useEffect(() => {
+    if (selectedEmployee !== undefined) {
+      employeeNameRef.current!.value = selectedEmployee.name;
+      employeeDepartmentRef.current!.value = selectedEmployee.department;
+    }
+  }, [selectedEmployee]);
+
   return (
     <div className="container-sm card mt-5">
       <div className="row px-4 pt-4">
-        <h3>Create Employee</h3>
+        <h3>
+          {selectedEmployee === undefined
+            ? "Create Employee"
+            : `Edit Employee (${selectedEmployee.name})`}
+        </h3>
       </div>
       <div className="row p-4">
         <div className="col-md-6">
@@ -303,9 +318,11 @@ export default function EmployeeForm() {
           <button
             className="btn btn-primary ms-2"
             type="submit"
-            onClick={handleCreateEmployee}
+            onClick={
+              selectedEmployee === undefined ? handleCreateEmployee : () => {}
+            }
           >
-            Create
+            {selectedEmployee === undefined ? "Create" : `Edit`}
           </button>
         </div>
       </div>

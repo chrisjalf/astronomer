@@ -7,8 +7,8 @@ export default function EmployeeList() {
 
   return (
     <div className="container my-5">
+      <h3 className="mb-3">List of Employee</h3>
       <div className="table-responsive">
-        {JSON.stringify(employees)}
         <table className="table">
           <thead>
             <tr>
@@ -19,50 +19,30 @@ export default function EmployeeList() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Alibaba</td>
-              <td>IT</td>
-              <td>Active</td>
-              <td>
-                <div
-                  className="btn-group"
-                  role="group"
-                  aria-label="Basic mixed styles example"
-                >
-                  <button type="button" className="btn btn-primary">
-                    View
-                  </button>
-                  <button type="button" className="btn btn-warning">
-                    Edit
-                  </button>
-                  <button type="button" className="btn btn-danger">
-                    Delete
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>Boost</td>
-              <td>Finance</td>
-              <td>Inactive</td>
-              <td>
-                <div
-                  className="btn-group"
-                  role="group"
-                  aria-label="Basic mixed styles example"
-                >
-                  <button type="button" className="btn btn-primary">
-                    View
-                  </button>
-                  <button type="button" className="btn btn-warning">
-                    Edit
-                  </button>
-                  <button type="button" className="btn btn-danger">
-                    Delete
-                  </button>
-                </div>
-              </td>
-            </tr>
+            {employees.map((employee) => (
+              <tr>
+                <td>{employee.name}</td>
+                <td>{employee.department}</td>
+                <td>{employee.status}</td>
+                <td>
+                  <div
+                    className="btn-group"
+                    role="group"
+                    aria-label="Basic mixed styles example"
+                  >
+                    <button type="button" className="btn btn-primary">
+                      View
+                    </button>
+                    <button type="button" className="btn btn-warning">
+                      Edit
+                    </button>
+                    <button type="button" className="btn btn-danger">
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

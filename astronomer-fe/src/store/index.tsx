@@ -1,3 +1,3 @@
-import EmployeeContextProvider, { EmployeeContext } from "./EmployeeContext";
+import { EmployeeContextProvider, EmployeeContext } from "./EmployeeContext";
 
 export { EmployeeContextProvider, EmployeeContext };

@@ -119,6 +119,16 @@ export default function EmployeeForm() {
 
   // reset employee form & its error
   function clearEmployee() {
+    clearEmployeeFields();
+
+    setEmployeePhoto(undefined);
+    setEmployeeError(initialEmployeeError);
+
+    if (selectedEmployee !== undefined) selectEmployee(undefined);
+  }
+
+  function clearEmployeeFields() {
+    if (employeeNameRef.current) employeeNameRef.current.value = "";
     if (employeeNameRef.current) employeeNameRef.current.value = "";
     if (employeeDepartmentRef.current) employeeDepartmentRef.current.value = "";
     if (employeeActiveRef.current) employeeActiveRef.current.checked = false;
@@ -127,11 +137,6 @@ export default function EmployeeForm() {
     if (employeeAddress1Ref.current) employeeAddress1Ref.current.value = "";
     if (employeeAddress2Ref.current) employeeAddress2Ref.current.value = "";
     if (employeePhotoRef.current) employeePhotoRef.current.value = "";
-
-    setEmployeePhoto(undefined);
-    setEmployeeError(initialEmployeeError);
-
-    if (selectedEmployee !== undefined) selectEmployee(undefined);
   }
 
   function handleCreateEmployee() {
@@ -161,15 +166,32 @@ export default function EmployeeForm() {
     }
 
     setDidClickCreateEmployee(false);
-  }, [didClickCreateEmployee, employeeError, createEmployee]);
+  }, [didClickCreateEmployee, employeeError, createEmployee, selectEmployee]);
 
   // side effects from selecting employee for edit
   useEffect(() => {
     if (selectedEmployee !== undefined) {
-      employeeNameRef.current!.value = selectedEmployee.name;
-      employeeDepartmentRef.current!.value = selectedEmployee.department;
+      if (employeeNameRef.current)
+        employeeNameRef.current.value = selectedEmployee.name;
+      if (employeeDepartmentRef.current)
+        employeeDepartmentRef.current.value = selectedEmployee.department;
+      if (employeeActiveRef.current)
+        employeeActiveRef.current.checked =
+          selectedEmployee.status === "Active";
+      if (employeeNumberRef.current)
+        employeeNumberRef.current.value = `${selectedEmployee.number}`;
+      if (employeeEmailRef.current)
+        employeeEmailRef.current.value = selectedEmployee.email;
+      if (employeeAddress1Ref.current)
+        employeeAddress1Ref.current.value = selectedEmployee.address1;
+      if (employeeAddress2Ref.current)
+        employeeAddress2Ref.current.value = selectedEmployee.address2 ?? "";
+      if (employeePhotoRef.current)
+        employeePhotoRef.current.value = selectedEmployee.photo ?? "";
+    } else {
+      if (didClickCreateEmployee) clearEmployeeFields();
     }
-  }, [selectedEmployee]);
+  }, [didClickCreateEmployee, selectedEmployee]);
 
   return (
     <div className="container-sm card mt-5">

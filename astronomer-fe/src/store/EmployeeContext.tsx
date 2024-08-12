@@ -10,11 +10,7 @@ export const EmployeeContext = createContext<EmployeeContextType>({
   selectEmployee: () => {},
 });
 
-export default function EmployeeContextProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export function EmployeeContextProvider({ children }: { children: ReactNode }) {
   const [dummyEmployees, setDummyEmployees] = useState<Employee[]>([
     {
       name: "Alibaba",
@@ -33,6 +29,7 @@ export default function EmployeeContextProvider({
     setDummyEmployees((prevEmployees) => {
       return [...prevEmployees, newEmployee];
     });
+    setSelectedEmployee(undefined);
   }
 
   function selectEmployee(employee?: Employee) {

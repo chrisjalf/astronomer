@@ -1,7 +1,14 @@
+import { useContext } from "react";
+
+import { EmployeeContext } from "../../store/EmployeeContext";
+
 export default function EmployeeList() {
+  const { employees } = useContext(EmployeeContext);
+
   return (
     <div className="container my-5">
       <div className="table-responsive">
+        {JSON.stringify(employees)}
         <table className="table">
           <thead>
             <tr>

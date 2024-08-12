@@ -1,6 +1,7 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 
-import { EmployeeFormError } from "../../assets/types/EmployeeFormError";
+import { EmployeeContext } from "../../store/index";
+import { EmployeeFull, EmployeeFormError } from "../../types/index";
 
 const initialEmployeeError: EmployeeFormError = {
   name: undefined,
@@ -34,6 +35,9 @@ export default function EmployeeForm() {
 
     if (file) setEmployeePhoto(file);
   }
+
+  // context
+  const { createEmployee } = useContext(EmployeeContext);
 
   function validateEmployeeInput(fieldName: string) {
     let errorMessage: string | undefined;
@@ -127,7 +131,7 @@ export default function EmployeeForm() {
     setEmployeeError(initialEmployeeError);
   }
 
-  function createEmployee() {
+  function handleCreateEmployee() {
     checkEmployee();
 
     setDidClickCreateEmployee(true);
@@ -139,11 +143,22 @@ export default function EmployeeForm() {
       didClickCreateEmployee &&
       Object.values(employeeError).every((val) => val === undefined)
     ) {
-      console.log("Employee created!");
+      const employee: EmployeeFull = {
+        name: employeeNameRef.current!.value,
+        department: employeeDepartmentRef.current!.value,
+        status:
+          employeeActiveRef.current!.checked === true ? "Active" : "Inactive",
+        number: Number(employeeNumberRef.current!.value),
+        email: employeeEmailRef.current!.value,
+        address1: employeeAddress1Ref.current!.value,
+        address2: employeeAddress2Ref.current?.value,
+        photo: employeePhotoRef.current?.value,
+      };
+      createEmployee(employee);
     }
 
     setDidClickCreateEmployee(false);
-  }, [didClickCreateEmployee, employeeError]);
+  }, [didClickCreateEmployee, employeeError, createEmployee]);
 
   return (
     <div className="container-sm card mt-5">
@@ -288,7 +303,7 @@ export default function EmployeeForm() {
           <button
             className="btn btn-primary ms-2"
             type="submit"
-            onClick={createEmployee}
+            onClick={handleCreateEmployee}
           >
             Create
           </button>

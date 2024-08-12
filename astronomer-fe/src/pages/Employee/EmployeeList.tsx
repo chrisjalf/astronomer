@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import { EmployeeContext } from "../../store/EmployeeContext";
+import { EmployeeContext } from "../../store/index";
 
 export default function EmployeeList() {
   const { employees } = useContext(EmployeeContext);
@@ -19,8 +19,8 @@ export default function EmployeeList() {
             </tr>
           </thead>
           <tbody>
-            {employees.map((employee) => (
-              <tr>
+            {employees.map((employee, index) => (
+              <tr key={index}>
                 <td>{employee.name}</td>
                 <td>{employee.department}</td>
                 <td>{employee.status}</td>

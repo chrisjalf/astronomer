@@ -14,4 +14,5 @@ export type EmployeeContextType = {
   selectedEmployee?: Employee;
   createEmployee: (employee: Employee) => void;
   selectEmployee: (employee?: Employee) => void;
+  deleteEmployee: (employee: Employee) => void;
 };

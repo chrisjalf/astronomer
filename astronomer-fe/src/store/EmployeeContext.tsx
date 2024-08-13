@@ -8,6 +8,7 @@ export const EmployeeContext = createContext<EmployeeContextType>({
   selectedEmployee: undefined,
   createEmployee: () => {},
   selectEmployee: () => {},
+  deleteEmployee: () => {},
 });
 
 export function EmployeeContextProvider({ children }: { children: ReactNode }) {
@@ -36,11 +37,18 @@ export function EmployeeContextProvider({ children }: { children: ReactNode }) {
     setSelectedEmployee(employee);
   }
 
+  function deleteEmployee(employee: Employee) {
+    setDummyEmployees((prevEmployees) => {
+      return [...prevEmployees.filter((emp) => emp.name !== employee.name)];
+    });
+  }
+
   const employeeCtx = {
     employees: dummyEmployees,
     selectedEmployee: selectedEmployee,
     createEmployee: (employee: Employee) => createEmployee(employee),
     selectEmployee: (employee?: Employee) => selectEmployee(employee),
+    deleteEmployee: (employee: Employee) => deleteEmployee(employee),
   };
 
   return (

@@ -1,18 +1,25 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
+import { Cache, CACHE_MANAGER } from "@nestjs/cache-manager";
+import { CreateEmployeeDto } from "./dto/create-employee.dto";
 
 @Injectable()
 export class EmployeeService {
+  private cacheTTLInMs = 86400 * 1000; // 24 hours
+
+  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+
   async findAll() {
-    return [
-      {
-        id: new Date().toString(),
-        name: "Alibaba",
-        department: "IT",
-        status: "Active",
-        number: 1123398609,
-        email: "chris.w4ac@gmail.com",
-        address1: "24-5 Residensi Vivo",
-      },
-    ];
+    return (await this.cacheManager.get("employees")) ?? [];
+  }
+
+  async create(dto: CreateEmployeeDto) {
+    let employees: CreateEmployeeDto[] =
+      (await this.cacheManager.get("employees")) ?? [];
+
+    if (employees.length > 0) employees.push(dto);
+    else employees = [dto];
+
+    await this.cacheManager.set("employees", employees, this.cacheTTLInMs);
+    return {};
   }
 }

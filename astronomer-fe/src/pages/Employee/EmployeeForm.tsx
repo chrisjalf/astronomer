@@ -165,7 +165,7 @@ export default function EmployeeForm() {
       createEmployee(employee);
     }
 
-    setDidClickCreateEmployee(false);
+    if (didClickCreateEmployee) setDidClickCreateEmployee(false);
   }, [didClickCreateEmployee, employeeError, createEmployee]);
 
   // side effects (from selecting employee for edit) / (after creating employee)

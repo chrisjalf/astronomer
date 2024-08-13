@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useCallback, useState } from "react";
 import { EmployeeContextType } from "../types/index";
 
 import { Employee } from "../types/index";
@@ -26,12 +26,15 @@ export function EmployeeContextProvider({ children }: { children: ReactNode }) {
     Employee | undefined
   >(undefined);
 
-  function createEmployee(newEmployee: Employee) {
+  const createEmployee = useCallback(function createEmployee(
+    newEmployee: Employee
+  ) {
     setDummyEmployees((prevEmployees) => {
       return [...prevEmployees, newEmployee];
     });
     setSelectedEmployee(undefined);
-  }
+  },
+  []);
 
   function selectEmployee(employee?: Employee) {
     setSelectedEmployee(employee);

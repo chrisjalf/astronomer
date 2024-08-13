@@ -6,30 +6,29 @@ import { Employee } from "../types/index";
 export const EmployeeContext = createContext<EmployeeContextType>({
   employees: [],
   selectedEmployee: undefined,
+  setEmployees: () => {},
   createEmployee: () => {},
   selectEmployee: () => {},
   deleteEmployee: () => {},
 });
 
 export function EmployeeContextProvider({ children }: { children: ReactNode }) {
-  const [dummyEmployees, setDummyEmployees] = useState<Employee[]>([
-    {
-      name: "Alibaba",
-      department: "IT",
-      status: "Active",
-      number: 1123398609,
-      email: "chris.w4ac@gmail.com",
-      address1: "24-5 Residensi Vivo",
-    },
-  ]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState<
     Employee | undefined
   >(undefined);
 
+  const handleSetEmployees = useCallback(function handleSetEmployees(
+    employees: Employee[]
+  ) {
+    setEmployees(employees);
+  },
+  []);
+
   const createEmployee = useCallback(function createEmployee(
     newEmployee: Employee
   ) {
-    setDummyEmployees((prevEmployees) => {
+    setEmployees((prevEmployees) => {
       return [...prevEmployees, newEmployee];
     });
     setSelectedEmployee(undefined);
@@ -41,17 +40,18 @@ export function EmployeeContextProvider({ children }: { children: ReactNode }) {
   }
 
   function deleteEmployee(employee: Employee) {
-    setDummyEmployees((prevEmployees) => {
+    setEmployees((prevEmployees) => {
       return [...prevEmployees.filter((emp) => emp.name !== employee.name)];
     });
   }
 
   const employeeCtx = {
-    employees: dummyEmployees,
+    employees: employees,
     selectedEmployee: selectedEmployee,
-    createEmployee: (employee: Employee) => createEmployee(employee),
-    selectEmployee: (employee?: Employee) => selectEmployee(employee),
-    deleteEmployee: (employee: Employee) => deleteEmployee(employee),
+    setEmployees: handleSetEmployees,
+    createEmployee: createEmployee,
+    selectEmployee: selectEmployee,
+    deleteEmployee: deleteEmployee,
   };
 
   return (

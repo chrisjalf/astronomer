@@ -1,13 +1,30 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 import Modal from "../../components/Modal/Modal";
 import ActionableModal from "../../components/ActionableModal/ActionableModal";
 
 import { EmployeeContext } from "../../store/index";
+import api from "../../api/index";
+import { Employee } from "../../types";
 
 export default function EmployeeList() {
-  const { employees, selectEmployee, deleteEmployee } =
+  const { employees, setEmployees, selectEmployee, deleteEmployee } =
     useContext(EmployeeContext);
+
+  useEffect(() => {
+    async function getEmployees() {
+      const { EmployeeService } = api;
+
+      try {
+        const emps: Employee[] = await EmployeeService.all();
+        setEmployees(emps);
+      } catch (error) {
+        alert(error);
+      }
+    }
+
+    getEmployees();
+  }, [setEmployees]);
 
   return (
     <div className="container my-5">

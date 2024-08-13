@@ -1,4 +1,6 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { Toast, ToastContainer } from "react-bootstrap";
 
 import Modal from "../../components/Modal/Modal";
 import ActionableModal from "../../components/ActionableModal/ActionableModal";
@@ -11,25 +13,63 @@ export default function EmployeeList() {
   const { employees, setEmployees, selectEmployee, deleteEmployee } =
     useContext(EmployeeContext);
 
+  const [isFetchingEmployees, setIsFetchingEmployees] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastTitle, setToastTitle] = useState("");
+  const [toastMessage, setToastMessage] = useState("");
+
   useEffect(() => {
     async function getEmployees() {
       const { EmployeeService } = api;
 
       try {
+        setIsFetchingEmployees(true);
         const emps: Employee[] = await EmployeeService.all();
+        setIsFetchingEmployees(false);
         setEmployees(emps);
       } catch (error) {
-        alert(error);
+        let message = "";
+        if (error instanceof Error) message = error.message;
+        else message = String(error);
+
+        setIsFetchingEmployees(false);
+        setShowToast(true);
+        setToastTitle("Error");
+        setToastMessage(message);
       }
     }
 
     getEmployees();
   }, [setEmployees]);
 
+  function resetToast() {
+    setShowToast(false);
+    setToastTitle("");
+    setToastMessage("");
+  }
+
   return (
     <div className="container my-5">
+      {createPortal(
+        <ToastContainer
+          className="p-3"
+          position={"top-end"}
+          style={{ zIndex: 1 }}
+        >
+          <Toast show={showToast} onClose={resetToast} delay={3000} autohide>
+            <Toast.Header>
+              <strong className="me-auto">{toastTitle}</strong>
+            </Toast.Header>
+            <Toast.Body>{toastMessage}</Toast.Body>
+          </Toast>
+        </ToastContainer>,
+        document.body
+      )}
       <h3 className="mb-3">List of Employee</h3>
-      {employees.length > 0 ? (
+      {isFetchingEmployees && (
+        <p className="fs-5 text-body-secondary text-center">Loading...</p>
+      )}
+      {!isFetchingEmployees && employees.length > 0 ? (
         <div className="table-responsive">
           <table className="table">
             <thead>

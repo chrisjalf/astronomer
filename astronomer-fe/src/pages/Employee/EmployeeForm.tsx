@@ -166,9 +166,9 @@ export default function EmployeeForm() {
     }
 
     setDidClickCreateEmployee(false);
-  }, [didClickCreateEmployee, employeeError, createEmployee, selectEmployee]);
+  }, [didClickCreateEmployee, employeeError, createEmployee]);
 
-  // side effects from selecting employee for edit
+  // side effects (from selecting employee for edit) / (after creating employee)
   useEffect(() => {
     if (selectedEmployee !== undefined) {
       if (employeeNameRef.current)
@@ -192,6 +192,11 @@ export default function EmployeeForm() {
       if (didClickCreateEmployee) clearEmployeeFields();
     }
   }, [didClickCreateEmployee, selectedEmployee]);
+
+  // side effects when selecting employee for edit but form contains error
+  useEffect(() => {
+    if (selectedEmployee !== undefined) setEmployeeError(initialEmployeeError);
+  }, [selectedEmployee, employeeError]);
 
   return (
     <div className="container-sm card mt-5">

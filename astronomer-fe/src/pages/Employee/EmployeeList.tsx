@@ -1,7 +1,7 @@
 import { useContext } from "react";
 
-import EmployeeModal from "./EmployeeModal";
-import DeleteEmployeeModal from "./DeleteEmployeeModal";
+import Modal from "../../components/Modal/Modal";
+import ActionableModal from "../../components/ActionableModal/ActionableModal";
 
 import { EmployeeContext } from "../../store/index";
 
@@ -58,12 +58,31 @@ export default function EmployeeList() {
                       >
                         Delete
                       </button>
-                      <EmployeeModal
-                        title={"View Employee"}
-                        closeText={"Close"}
-                        employee={employee}
-                      />
-                      <DeleteEmployeeModal
+                      <Modal title={"View Employee"} closeText={"Close"}>
+                        <dl className="row mb-0">
+                          <dt className="col-sm-3">Name</dt>
+                          <dd className="col-sm-9">{employee.name}</dd>
+
+                          <dt className="col-sm-3">Department</dt>
+                          <dd className="col-sm-9">{employee.department}</dd>
+
+                          <dt className="col-sm-3">Status</dt>
+                          <dd className="col-sm-9">{employee.status}</dd>
+
+                          <dt className="col-sm-3">Number</dt>
+                          <dd className="col-sm-9">{employee.number}</dd>
+
+                          <dt className="col-sm-3">Email</dt>
+                          <dd className="col-sm-9">{employee.email}</dd>
+
+                          <dt className="col-sm-3">Address</dt>
+                          <dd className="col-sm-9">
+                            <p className="mb-0">{employee.address1}</p>
+                            {employee.address2 && <p>{employee.address2}</p>}
+                          </dd>
+                        </dl>
+                      </Modal>
+                      <ActionableModal
                         title={`Deleting Employee (${employee.name})`}
                         body={"This action cannot be undone. Proceed?"}
                         closeText={"Close"}

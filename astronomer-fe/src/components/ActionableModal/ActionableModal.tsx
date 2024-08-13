@@ -6,7 +6,7 @@ type ModalProps = {
   confirm: () => void;
 };
 
-export default function DeleteEmployeeModal(props: ModalProps) {
+export default function ActionableModal(props: ModalProps) {
   return (
     <div
       className="modal fade"

@@ -1,5 +1,6 @@
 import { useContext } from "react";
 
+import EmployeeModal from "./EmployeeModal";
 import DeleteEmployeeModal from "./DeleteEmployeeModal";
 
 import { EmployeeContext } from "../../store/index";
@@ -34,7 +35,12 @@ export default function EmployeeList() {
                       role="group"
                       aria-label="Basic mixed styles example"
                     >
-                      <button type="button" className="btn btn-primary">
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#employeeModal"
+                      >
                         View
                       </button>
                       <button
@@ -52,6 +58,11 @@ export default function EmployeeList() {
                       >
                         Delete
                       </button>
+                      <EmployeeModal
+                        title={"View Employee"}
+                        closeText={"Close"}
+                        employee={employee}
+                      />
                       <DeleteEmployeeModal
                         title={`Deleting Employee (${employee.name})`}
                         body={"This action cannot be undone. Proceed?"}

@@ -1,5 +1,7 @@
 import { useContext } from "react";
 
+import DeleteEmployeeModal from "./DeleteEmployeeModal";
+
 import { EmployeeContext } from "../../store/index";
 
 export default function EmployeeList() {
@@ -9,7 +11,7 @@ export default function EmployeeList() {
   return (
     <div className="container my-5">
       <h3 className="mb-3">List of Employee</h3>
-      {employees.length > 0 && (
+      {employees.length > 0 ? (
         <div className="table-responsive">
           <table className="table">
             <thead>
@@ -45,10 +47,18 @@ export default function EmployeeList() {
                       <button
                         type="button"
                         className="btn btn-danger"
-                        onClick={() => deleteEmployee(employee)}
+                        data-bs-toggle="modal"
+                        data-bs-target="#deleteEmployeeModal"
                       >
                         Delete
                       </button>
+                      <DeleteEmployeeModal
+                        title={`Deleting Employee (${employee.name})`}
+                        body={"This action cannot be undone. Proceed?"}
+                        closeText={"Close"}
+                        confirmText={"Confirm"}
+                        confirm={() => deleteEmployee(employee)}
+                      />
                     </div>
                   </td>
                 </tr>
@@ -56,6 +66,10 @@ export default function EmployeeList() {
             </tbody>
           </table>
         </div>
+      ) : (
+        <p className="fs-5 text-body-secondary text-center">
+          No employees found
+        </p>
       )}
     </div>
   );

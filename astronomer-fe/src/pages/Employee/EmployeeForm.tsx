@@ -138,6 +138,7 @@ export default function EmployeeForm() {
     if (employeeAddress1Ref.current) employeeAddress1Ref.current.value = "";
     if (employeeAddress2Ref.current) employeeAddress2Ref.current.value = "";
     if (employeePhotoRef.current) employeePhotoRef.current.value = "";
+    if (photo) setEmployeePhoto(undefined);
   }
 
   function handleCreateEmployee() {
@@ -161,7 +162,9 @@ export default function EmployeeForm() {
         email: employeeEmailRef.current!.value,
         address1: employeeAddress1Ref.current!.value,
         address2: employeeAddress2Ref.current?.value,
-        photo: employeePhotoRef.current?.value,
+        photo: employeePhotoRef.current?.files
+          ? employeePhotoRef.current?.files[0]
+          : undefined,
       };
       createEmployee(employee);
     }

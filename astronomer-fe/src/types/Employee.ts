@@ -6,7 +6,7 @@ export type EmployeeRequest = {
   email: string;
   address1: string;
   address2?: string;
-  photo?: string;
+  photo?: File;
 };
 
 export type Employee = {

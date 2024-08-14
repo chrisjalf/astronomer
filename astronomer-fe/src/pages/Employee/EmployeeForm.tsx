@@ -1,5 +1,6 @@
 import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 
+import { validateEmail } from "../../util";
 import { EmployeeContext } from "../../store/index";
 import { EmployeeFormError } from "../../types/index";
 import { EmployeeRequest, UpdateEmployeeRequest } from "../../types/Employee";
@@ -79,8 +80,9 @@ export default function EmployeeForm() {
         break;
       }
       case "email": {
-        if (employeeEmailRef?.current?.value === "")
-          errorMessage = "Email is required";
+        const email = employeeEmailRef?.current?.value ?? "";
+        if (email === "") errorMessage = "Email is required";
+        else if (!validateEmail(email)) errorMessage = "Email is invalid";
         else errorMessage = undefined;
 
         break;
@@ -119,8 +121,9 @@ export default function EmployeeForm() {
       error["number"] = "Number is required";
     else error["number"] = undefined;
 
-    if (employeeEmailRef?.current?.value === "")
-      error["email"] = "Email is required";
+    const email = employeeEmailRef?.current?.value ?? "";
+    if (email === "") error["email"] = "Email is required";
+    else if (!validateEmail(email)) error["email"] = "Email is invalid";
     else error["email"] = undefined;
 
     if (employeeAddress1Ref?.current?.value === "")

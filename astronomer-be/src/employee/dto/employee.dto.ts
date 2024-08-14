@@ -7,6 +7,7 @@ export default class EmployeeDto {
   email: string;
   address1: string;
   address2?: string;
+  photo?: string;
 
   constructor(
     id: string,

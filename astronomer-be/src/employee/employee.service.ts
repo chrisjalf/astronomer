@@ -6,8 +6,6 @@ import * as fs from "fs";
 import EmployeeDto from "./dto/employee.dto";
 import CreateEmployeeDto from "./dto/create-employee.dto";
 
-import { BadRequestException } from "@nestjs/common";
-
 @Injectable()
 export class EmployeeService {
   private cacheTTLInMs = 86400 * 1000; // 24 hours
@@ -34,16 +32,17 @@ export class EmployeeService {
       const uploadDir = path.join(__dirname, "..", "uploads");
       const fileExtArray = file.mimetype.split("/");
       const fileExtension = fileExtArray[fileExtArray.length - 1];
-      const filePath = path.join(
-        uploadDir,
-        `${formattedDto.id}-photo.${fileExtension}`
-      );
+      const fileName = `${formattedDto.id}-photo.${fileExtension}`;
+      const filePath = path.join(uploadDir, fileName);
 
       // ensure the uploads directory exists
       await fs.promises.mkdir(uploadDir, { recursive: true });
 
       // write the file to the uploads directory
       await fs.promises.writeFile(filePath, file.buffer);
+
+      const baseUrl = "http://localhost:3000";
+      formattedDto.photo = `${baseUrl}/uploads/${fileName}`;
     }
 
     let employees: EmployeeDto[] =

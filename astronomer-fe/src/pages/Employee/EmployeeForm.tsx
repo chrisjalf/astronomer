@@ -77,7 +77,7 @@ export default function EmployeeForm() {
         if (employeeNumber === "") errorMessage = "Number is required";
         else if (!validateNumber(employeeNumber))
           errorMessage =
-            "Number is invalid, must be 10-11 of numerical characters";
+            "Number is invalid, must be 10-11 of numeric characters";
         else errorMessage = undefined;
 
         break;
@@ -124,7 +124,7 @@ export default function EmployeeForm() {
     if (employeeNumber === "") error["number"] = "Number is required";
     else if (!validateNumber(employeeNumber))
       error["number"] =
-        "Number is invalid, must be 10-11 of numerical characters";
+        "Number is invalid, must be 10-11 of numeric characters";
     else error["number"] = undefined;
 
     const email = employeeEmailRef?.current?.value ?? "";

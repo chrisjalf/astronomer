@@ -1,4 +1,4 @@
-import { IsEmail, IsIn, IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsIn, IsNotEmpty, Matches } from "class-validator";
 
 export default class UpdateEmployeeDto {
   @IsNotEmpty()
@@ -15,6 +15,9 @@ export default class UpdateEmployeeDto {
   status: string;
 
   @IsNotEmpty()
+  @Matches(/^0*[0-9]{10,11}$/, {
+    message: "number must be 10-11 of numeric characters",
+  })
   number: string;
 
   @IsNotEmpty()

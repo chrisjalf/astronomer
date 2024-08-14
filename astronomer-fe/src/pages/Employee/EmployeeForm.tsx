@@ -1,7 +1,7 @@
 import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 
 import { EmployeeContext } from "../../store/index";
-import { /* Employee, */ EmployeeFormError } from "../../types/index";
+import { EmployeeFormError } from "../../types/index";
 import { EmployeeRequest } from "../../types/Employee";
 
 const initialEmployeeError: EmployeeFormError = {

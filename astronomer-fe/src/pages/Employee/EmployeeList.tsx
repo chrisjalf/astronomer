@@ -1,6 +1,4 @@
 import { useContext } from "react";
-import { createPortal } from "react-dom";
-import { Toast, ToastContainer } from "react-bootstrap";
 
 import Modal from "../../components/Modal/Modal";
 import ActionableModal from "../../components/ActionableModal/ActionableModal";
@@ -8,42 +6,11 @@ import ActionableModal from "../../components/ActionableModal/ActionableModal";
 import { EmployeeContext } from "../../store/index";
 
 export default function EmployeeList() {
-  const {
-    employees,
-    isFetchingEmployees,
-    showFetchEmployeesToast,
-    fetchEmployeesToast,
-    selectEmployee,
-    deleteEmployee,
-    resetFetchEmployeesToast,
-  } = useContext(EmployeeContext);
+  const { employees, isFetchingEmployees, selectEmployee, deleteEmployee } =
+    useContext(EmployeeContext);
 
   return (
     <div className="container my-5">
-      {createPortal(
-        <ToastContainer
-          className="p-3"
-          position={"top-end"}
-          style={{ zIndex: 1 }}
-        >
-          <Toast
-            show={showFetchEmployeesToast}
-            onClose={resetFetchEmployeesToast}
-            delay={3000}
-            autohide
-          >
-            <Toast.Header>
-              <strong className="me-auto">
-                {fetchEmployeesToast?.title ?? "Error"}
-              </strong>
-            </Toast.Header>
-            <Toast.Body>
-              {fetchEmployeesToast?.message ?? "Something went wrong"}
-            </Toast.Body>
-          </Toast>
-        </ToastContainer>,
-        document.body
-      )}
       <h3 className="mb-3">List of Employee</h3>
       {isFetchingEmployees && (
         <p className="fs-5 text-body-secondary text-center">Loading...</p>

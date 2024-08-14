@@ -12,18 +12,22 @@ import {
   Employee,
   EmployeeRequest,
   FetchEmployeesToast,
+  DeleteEmployeeToast,
+  CreateEmployeeToast,
 } from "../types/index";
+import { createPortal } from "react-dom";
+import { Toast, ToastContainer } from "react-bootstrap";
 
 export const EmployeeContext = createContext<EmployeeContextType>({
   employees: [],
+
   isFetchingEmployees: false,
-  showFetchEmployeesToast: false,
-  fetchEmployeesToast: undefined,
+
   selectedEmployee: undefined,
+
   createEmployee: () => {},
   selectEmployee: () => {},
   deleteEmployee: () => {},
-  resetFetchEmployeesToast: () => {},
 });
 
 export function EmployeeContextProvider({ children }: { children: ReactNode }) {
@@ -32,14 +36,19 @@ export function EmployeeContextProvider({ children }: { children: ReactNode }) {
   // EmployeeList states
   const [isFetchingEmployees, setIsFetchingEmployees] = useState(false);
   const [showFetchEmployeesToast, setShowFetchEmployeesToast] = useState(false);
-  const [fetchEmployeesToast, setFetchEmployeesToast] = useState<
-    FetchEmployeesToast | undefined
-  >(undefined);
+  const [fetchEmployeesToast, setFetchEmployeesToast] =
+    useState<FetchEmployeesToast>({ title: "", message: "" });
+  const [showDeleteEmployeeToast, setShowDeleteEmployeeToast] = useState(false);
+  const [deleteEmployeeToast, setDeleteEmployeeToast] =
+    useState<DeleteEmployeeToast>({ title: "", message: "" });
 
   // EmployeeForm states
   const [selectedEmployee, setSelectedEmployee] = useState<
     Employee | undefined
   >(undefined);
+  const [showCreateEmployeeToast, setShowCreateEmployeeToast] = useState(false);
+  const [createEmployeeToast, setCreateEmployeeToast] =
+    useState<CreateEmployeeToast>({ title: "", message: "" });
 
   useEffect(() => {
     getEmployees();
@@ -82,7 +91,11 @@ export function EmployeeContextProvider({ children }: { children: ReactNode }) {
       if (error instanceof Error) message = error.message;
       else message = String(error);
 
-      console.log(message);
+      setShowCreateEmployeeToast(true);
+      setCreateEmployeeToast({
+        title: "Error",
+        message,
+      });
     }
   },
   []);
@@ -103,30 +116,112 @@ export function EmployeeContextProvider({ children }: { children: ReactNode }) {
       if (error instanceof Error) message = error.message;
       else message = String(error);
 
-      console.log(message);
+      setShowDeleteEmployeeToast(true);
+      setDeleteEmployeeToast({
+        title: "Error",
+        message,
+      });
     }
   }, []);
 
   function resetFetchEmployeesToast() {
     setShowFetchEmployeesToast(false);
-    setFetchEmployeesToast(undefined);
+    setFetchEmployeesToast({ title: "", message: "" });
+  }
+
+  function resetDeleteEmployeeToast() {
+    setShowDeleteEmployeeToast(false);
+    setDeleteEmployeeToast({ title: "", message: "" });
+  }
+
+  function resetCreateEmployeeToast() {
+    setShowCreateEmployeeToast(false);
+    setCreateEmployeeToast({ title: "", message: "" });
   }
 
   const employeeCtx = {
     employees: employees,
+
     isFetchingEmployees: isFetchingEmployees,
-    showFetchEmployeesToast: showFetchEmployeesToast,
-    fetchEmployeesToast: fetchEmployeesToast,
+
     selectedEmployee: selectedEmployee,
+    showCreateEmployeeToast: showCreateEmployeeToast,
+    createEmployeeToast: createEmployeeToast,
+
     createEmployee: createEmployee,
     selectEmployee: selectEmployee,
     deleteEmployee: deleteEmployee,
-    resetFetchEmployeesToast: resetFetchEmployeesToast,
+    resetCreateEmployeeToast: resetCreateEmployeeToast,
   };
 
   return (
     <EmployeeContext.Provider value={employeeCtx}>
-      {children}
+      <>
+        {/* Toast for failing to fetch employees */}
+        {createPortal(
+          <ToastContainer
+            className="p-3"
+            position={"top-end"}
+            style={{ zIndex: 1 }}
+          >
+            <Toast
+              show={showFetchEmployeesToast}
+              onClose={resetFetchEmployeesToast}
+              delay={3000}
+              autohide
+            >
+              <Toast.Header>
+                <strong className="me-auto">{fetchEmployeesToast.title}</strong>
+              </Toast.Header>
+              <Toast.Body>{fetchEmployeesToast.message}</Toast.Body>
+            </Toast>
+          </ToastContainer>,
+          document.body
+        )}
+        {/* Toast for failing to delete employee */}
+        {createPortal(
+          <ToastContainer
+            className="p-3"
+            position={"top-end"}
+            style={{ zIndex: 1 }}
+          >
+            <Toast
+              show={showDeleteEmployeeToast}
+              onClose={resetDeleteEmployeeToast}
+              delay={3000}
+              autohide
+            >
+              <Toast.Header>
+                <strong className="me-auto">{deleteEmployeeToast.title}</strong>
+              </Toast.Header>
+              <Toast.Body>{deleteEmployeeToast.message}</Toast.Body>
+            </Toast>
+          </ToastContainer>,
+          document.body
+        )}
+        {/* Toast for failing to create employee */}
+        {createPortal(
+          <ToastContainer
+            className="p-3"
+            position={"top-end"}
+            style={{ zIndex: 1 }}
+          >
+            <Toast
+              show={showCreateEmployeeToast}
+              onClose={resetCreateEmployeeToast}
+              delay={3000}
+              autohide
+            >
+              <Toast.Header>
+                <strong className="me-auto">{createEmployeeToast.title}</strong>
+              </Toast.Header>
+              <Toast.Body>{createEmployeeToast.message}</Toast.Body>
+            </Toast>
+          </ToastContainer>,
+          document.body
+        )}
+        {children}
+      </>
     </EmployeeContext.Provider>
   );
 }

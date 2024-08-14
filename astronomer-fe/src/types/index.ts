@@ -1,4 +1,15 @@
-import { Employee, EmployeeContextType } from "./Employee";
+import {
+  Employee,
+  EmployeeRequest,
+  EmployeeContextType,
+  FetchEmployeesToast,
+} from "./Employee";
 import { EmployeeFormError } from "./Error";
 
-export type { Employee, EmployeeContextType, EmployeeFormError };
+export type {
+  Employee,
+  EmployeeRequest,
+  EmployeeContextType,
+  FetchEmployeesToast,
+  EmployeeFormError,
+};

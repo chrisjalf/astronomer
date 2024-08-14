@@ -5,11 +5,14 @@ import {
   useEffect,
   useState,
 } from "react";
-import { EmployeeContextType } from "../types/index";
 
-import { Employee } from "../types/index";
 import api from "../api";
-import { FetchEmployeesToast } from "../types/Employee";
+import {
+  EmployeeContextType,
+  Employee,
+  EmployeeRequest,
+  FetchEmployeesToast,
+} from "../types/index";
 
 export const EmployeeContext = createContext<EmployeeContextType>({
   employees: [],
@@ -26,17 +29,21 @@ export const EmployeeContext = createContext<EmployeeContextType>({
 export function EmployeeContextProvider({ children }: { children: ReactNode }) {
   const [employees, setEmployees] = useState<Employee[]>([]);
 
-  // EmployeeList
+  // EmployeeList states
   const [isFetchingEmployees, setIsFetchingEmployees] = useState(false);
   const [showFetchEmployeesToast, setShowFetchEmployeesToast] = useState(false);
   const [fetchEmployeesToast, setFetchEmployeesToast] = useState<
     FetchEmployeesToast | undefined
   >(undefined);
 
-  // EmployeeForm
+  // EmployeeForm states
   const [selectedEmployee, setSelectedEmployee] = useState<
     Employee | undefined
   >(undefined);
+
+  useEffect(() => {
+    getEmployees();
+  }, []);
 
   // get all employees api
   async function getEmployees() {
@@ -61,17 +68,22 @@ export function EmployeeContextProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  useEffect(() => {
-    getEmployees();
-  }, []);
-
-  const createEmployee = useCallback(function createEmployee(
-    newEmployee: Employee
+  const createEmployee = useCallback(async function createEmployee(
+    employee: EmployeeRequest
   ) {
-    setEmployees((prevEmployees) => {
-      return [...prevEmployees, newEmployee];
-    });
-    setSelectedEmployee(undefined);
+    const { EmployeeService } = api;
+
+    try {
+      // create employee api
+      await EmployeeService.create(employee);
+      await getEmployees();
+    } catch (error) {
+      let message = "";
+      if (error instanceof Error) message = error.message;
+      else message = String(error);
+
+      console.log(message);
+    }
   },
   []);
 

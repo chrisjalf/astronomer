@@ -28,11 +28,14 @@ export type FetchEmployeesToast = {
 
 export type EmployeeContextType = {
   employees: Employee[];
+
   isFetchingEmployees: boolean;
   showFetchEmployeesToast: boolean;
   fetchEmployeesToast?: FetchEmployeesToast;
+
   selectedEmployee?: Employee;
-  createEmployee: (employee: Employee) => void;
+
+  createEmployee: (employee: EmployeeRequest) => void;
   selectEmployee: (employee?: Employee) => void;
   deleteEmployee: (employee: Employee) => void;
   resetFetchEmployeesToast: () => void;

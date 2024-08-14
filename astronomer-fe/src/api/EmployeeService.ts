@@ -23,5 +23,4 @@ export const create = async (employee: EmployeeRequest) => {
   });
 
   if (!response.ok) throw new Error("Failed to create employee");
-  else return;
 };

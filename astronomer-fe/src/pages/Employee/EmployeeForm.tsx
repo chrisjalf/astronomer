@@ -22,7 +22,7 @@ export default function EmployeeForm() {
   const employeeAddress1Ref = useRef<HTMLInputElement>(null);
   const employeeAddress2Ref = useRef<HTMLInputElement>(null);
   const employeePhotoRef = useRef<HTMLInputElement>(null);
-  const [photo, setEmployeePhoto] = useState<File | undefined>(undefined);
+  const [photo, setEmployeePhoto] = useState<string | undefined>(undefined);
   const [didClickCreateEmployee, setDidClickCreateEmployee] = useState(false);
 
   // employee form error
@@ -34,7 +34,16 @@ export default function EmployeeForm() {
         ? event.target.files[0]
         : undefined;
 
-    if (file) setEmployeePhoto(file);
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        // convert the file to a base64 string and set it to state
+        setEmployeePhoto(reader.result as string);
+      };
+
+      reader.readAsDataURL(file); // read the file as a data URL
+    }
   }
 
   // context
@@ -138,7 +147,6 @@ export default function EmployeeForm() {
     if (employeeAddress1Ref.current) employeeAddress1Ref.current.value = "";
     if (employeeAddress2Ref.current) employeeAddress2Ref.current.value = "";
     if (employeePhotoRef.current) employeePhotoRef.current.value = "";
-    if (photo) setEmployeePhoto(undefined);
   }
 
   function handleCreateEmployee() {
@@ -172,30 +180,47 @@ export default function EmployeeForm() {
     if (didClickCreateEmployee) setDidClickCreateEmployee(false);
   }, [didClickCreateEmployee, employeeError, createEmployee]);
 
-  // side effects (from selecting employee for edit) / (after creating employee)
+  // side effects after creating employee
+  useEffect(() => {
+    if (didClickCreateEmployee) {
+      clearEmployeeFields();
+      setEmployeePhoto(undefined);
+    }
+  }, [didClickCreateEmployee]);
+
+  // side effects after (selecting an employee for edit) / (clearing form)
   useEffect(() => {
     if (selectedEmployee !== undefined) {
       if (employeeNameRef.current)
         employeeNameRef.current.value = selectedEmployee.name;
+
       if (employeeDepartmentRef.current)
         employeeDepartmentRef.current.value = selectedEmployee.department;
+
       if (employeeActiveRef.current)
         employeeActiveRef.current.checked =
           selectedEmployee.status === "Active";
+
       if (employeeNumberRef.current)
         employeeNumberRef.current.value = `${selectedEmployee.number}`;
+
       if (employeeEmailRef.current)
         employeeEmailRef.current.value = selectedEmployee.email;
+
       if (employeeAddress1Ref.current)
         employeeAddress1Ref.current.value = selectedEmployee.address1;
+
       if (employeeAddress2Ref.current)
         employeeAddress2Ref.current.value = selectedEmployee.address2 ?? "";
-      if (employeePhotoRef.current)
-        employeePhotoRef.current.value = selectedEmployee.photo ?? "";
+
+      if (employeePhotoRef.current) employeePhotoRef.current.value = "";
+
+      setEmployeePhoto(selectedEmployee.photo);
     } else {
-      if (didClickCreateEmployee) clearEmployeeFields();
+      clearEmployeeFields();
+      setEmployeePhoto(undefined);
     }
-  }, [didClickCreateEmployee, selectedEmployee]);
+  }, [selectedEmployee]);
 
   // side effects when selecting employee for edit but form contains error
   useEffect(() => {
@@ -320,7 +345,7 @@ export default function EmployeeForm() {
           <div className="col-md-6">
             <div className="mb-3">Photo</div>
             <img
-              src={URL.createObjectURL(photo)}
+              src={photo}
               className="img-thumbnail"
               alt="employee-image"
             ></img>

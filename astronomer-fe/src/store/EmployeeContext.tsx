@@ -104,25 +104,31 @@ export function EmployeeContextProvider({ children }: { children: ReactNode }) {
     setSelectedEmployee(employee);
   }
 
-  const deleteEmployee = useCallback(async function deleteEmployee(id: string) {
-    const { EmployeeService } = api;
+  const deleteEmployee = useCallback(
+    async function deleteEmployee(id: string) {
+      const { EmployeeService } = api;
 
-    try {
-      // delete employee api
-      await EmployeeService.del(id);
-      getEmployees();
-    } catch (error) {
-      let message = "";
-      if (error instanceof Error) message = error.message;
-      else message = String(error);
+      try {
+        // delete employee api
+        await EmployeeService.del(id);
 
-      setShowDeleteEmployeeToast(true);
-      setDeleteEmployeeToast({
-        title: "Error",
-        message,
-      });
-    }
-  }, []);
+        getEmployees();
+
+        if (selectedEmployee !== undefined) setSelectedEmployee(undefined);
+      } catch (error) {
+        let message = "";
+        if (error instanceof Error) message = error.message;
+        else message = String(error);
+
+        setShowDeleteEmployeeToast(true);
+        setDeleteEmployeeToast({
+          title: "Error",
+          message,
+        });
+      }
+    },
+    [selectedEmployee]
+  );
 
   function resetFetchEmployeesToast() {
     setShowFetchEmployeesToast(false);

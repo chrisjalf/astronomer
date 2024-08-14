@@ -1,7 +1,9 @@
 import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 
 import { EmployeeContext } from "../../store/index";
-import { Employee, EmployeeFormError } from "../../types/index";
+import { /* Employee, */ EmployeeFormError } from "../../types/index";
+import { EmployeeRequest } from "../../types/Employee";
+import api from "../../api";
 
 const initialEmployeeError: EmployeeFormError = {
   name: undefined,
@@ -37,7 +39,7 @@ export default function EmployeeForm() {
   }
 
   // context
-  const { selectedEmployee, createEmployee, selectEmployee } =
+  const { selectedEmployee, /* createEmployee, */ selectEmployee } =
     useContext(EmployeeContext);
 
   function validateEmployeeInput(fieldName: string) {
@@ -147,11 +149,21 @@ export default function EmployeeForm() {
 
   // side effects from creating employee
   useEffect(() => {
+    async function createEmployee(employee: EmployeeRequest) {
+      const { EmployeeService } = api;
+
+      try {
+        await EmployeeService.create(employee);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     if (
       didClickCreateEmployee &&
       Object.values(employeeError).every((val) => val === undefined)
     ) {
-      const employee: Employee = {
+      const employee: EmployeeRequest = {
         name: employeeNameRef.current!.value,
         department: employeeDepartmentRef.current!.value,
         status:
@@ -166,7 +178,7 @@ export default function EmployeeForm() {
     }
 
     if (didClickCreateEmployee) setDidClickCreateEmployee(false);
-  }, [didClickCreateEmployee, employeeError, createEmployee]);
+  }, [didClickCreateEmployee, employeeError /* createEmployee */]);
 
   // side effects (from selecting employee for edit) / (after creating employee)
   useEffect(() => {

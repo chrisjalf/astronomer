@@ -28,5 +28,4 @@ export type EmployeeContextType = {
   createEmployee: (employee: Employee) => void;
   selectEmployee: (employee?: Employee) => void;
   deleteEmployee: (employee: Employee) => void;
-  refreshEmployees: () => void;
 };

@@ -1,6 +1,8 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Cache, CACHE_MANAGER } from "@nestjs/cache-manager";
-import { CreateEmployeeDto } from "./dto/create-employee.dto";
+import { v4 as uuid } from "uuid";
+import EmployeeDto from "./dto/employee.dto";
+import CreateEmployeeDto from "./dto/create-employee.dto";
 
 @Injectable()
 export class EmployeeService {
@@ -13,11 +15,23 @@ export class EmployeeService {
   }
 
   async create(dto: CreateEmployeeDto) {
-    let employees: CreateEmployeeDto[] =
+    const formattedDto = new EmployeeDto(
+      uuid(),
+      dto.name,
+      dto.department,
+      dto.status,
+      dto.number,
+      dto.email,
+      dto.address1,
+      dto.address2
+    );
+
+    let employees: EmployeeDto[] =
       (await this.cacheManager.get("employees")) ?? [];
 
-    if (employees.length > 0) employees.push(dto);
-    else employees = [dto];
+    if (employees.length > 0) {
+      employees.push(formattedDto);
+    } else employees = [formattedDto];
 
     await this.cacheManager.set("employees", employees, this.cacheTTLInMs);
     return {};

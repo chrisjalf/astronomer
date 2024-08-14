@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpCode, Post } from "@nestjs/common";
 import { EmployeeService } from "./employee.service";
-import { CreateEmployeeDto } from "./dto/create-employee.dto";
+import CreateEmployeeDto from "./dto/create-employee.dto";
 
 @Controller("employee")
 export class EmployeeController {

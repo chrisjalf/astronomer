@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, HttpCode, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+} from "@nestjs/common";
 import { EmployeeService } from "./employee.service";
 import CreateEmployeeDto from "./dto/create-employee.dto";
 
@@ -20,7 +28,7 @@ export class EmployeeController {
 
   @Delete(":id")
   @HttpCode(200)
-  async delete(id: string) {
-    
+  async delete(@Param("id") id: string) {
+    return this.employeeService.delete(id);
   }
 }

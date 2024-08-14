@@ -6,7 +6,11 @@ import {
   HttpCode,
   Param,
   Post,
+  UploadedFile,
+  UseInterceptors,
 } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { Express } from "express";
 import { EmployeeService } from "./employee.service";
 import CreateEmployeeDto from "./dto/create-employee.dto";
 
@@ -22,8 +26,12 @@ export class EmployeeController {
 
   @Post("create")
   @HttpCode(200)
-  async create(@Body() dto: CreateEmployeeDto) {
-    return this.employeeService.create(dto);
+  @UseInterceptors(FileInterceptor("photo"))
+  async create(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() dto: CreateEmployeeDto
+  ) {
+    return this.employeeService.create(dto, file);
   }
 
   @Delete(":id")

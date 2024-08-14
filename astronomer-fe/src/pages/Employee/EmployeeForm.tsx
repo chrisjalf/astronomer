@@ -2,7 +2,7 @@ import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 
 import { EmployeeContext } from "../../store/index";
 import { EmployeeFormError } from "../../types/index";
-import { EmployeeRequest } from "../../types/Employee";
+import { EmployeeRequest, UpdateEmployeeRequest } from "../../types/Employee";
 
 const initialEmployeeError: EmployeeFormError = {
   name: undefined,
@@ -23,10 +23,13 @@ export default function EmployeeForm() {
   const employeeAddress2Ref = useRef<HTMLInputElement>(null);
   const employeePhotoRef = useRef<HTMLInputElement>(null);
   const [photo, setEmployeePhoto] = useState<string | undefined>(undefined);
-  const [didClickCreateEmployee, setDidClickCreateEmployee] = useState(false);
 
   // employee form error
   const [employeeError, setEmployeeError] = useState(initialEmployeeError);
+
+  // misc
+  const [didClickCreateEmployee, setDidClickCreateEmployee] = useState(false);
+  const [didClickEditEmployee, setDidClickEditEmployee] = useState(false);
 
   function handleEmployeePhoto(event: ChangeEvent<HTMLInputElement>) {
     const file =
@@ -47,7 +50,7 @@ export default function EmployeeForm() {
   }
 
   // context
-  const { selectedEmployee, createEmployee, selectEmployee } =
+  const { selectedEmployee, createEmployee, selectEmployee, editEmployee } =
     useContext(EmployeeContext);
 
   function validateEmployeeInput(fieldName: string) {
@@ -155,6 +158,12 @@ export default function EmployeeForm() {
     setDidClickCreateEmployee(true);
   }
 
+  function handleEditEmployee() {
+    checkEmployee();
+
+    setDidClickEditEmployee(true);
+  }
+
   // side effects from creating employee
   useEffect(() => {
     if (
@@ -226,6 +235,40 @@ export default function EmployeeForm() {
   useEffect(() => {
     if (selectedEmployee !== undefined) setEmployeeError(initialEmployeeError);
   }, [selectedEmployee, employeeError]);
+
+  // side effects from editing employee
+  useEffect(() => {
+    if (
+      didClickEditEmployee &&
+      Object.values(employeeError).every((val) => val === undefined)
+    ) {
+      const employee: UpdateEmployeeRequest = {
+        id: selectedEmployee!.id,
+        name: employeeNameRef.current!.value,
+        department: employeeDepartmentRef.current!.value,
+        status:
+          employeeActiveRef.current!.checked === true ? "Active" : "Inactive",
+        number: Number(employeeNumberRef.current!.value),
+        email: employeeEmailRef.current!.value,
+        address1: employeeAddress1Ref.current!.value,
+        address2: employeeAddress2Ref.current?.value,
+        photo: employeePhotoRef.current?.files
+          ? employeePhotoRef.current?.files[0]
+          : undefined,
+      };
+      editEmployee(employee);
+    }
+
+    if (didClickEditEmployee) setDidClickEditEmployee(false);
+  }, [didClickEditEmployee, employeeError, selectedEmployee, editEmployee]);
+
+  // side effects after editing employee
+  useEffect(() => {
+    if (didClickEditEmployee) {
+      clearEmployeeFields();
+      setEmployeePhoto(undefined);
+    }
+  }, [didClickEditEmployee]);
 
   return (
     <div className="container-sm card mt-5">
@@ -375,7 +418,9 @@ export default function EmployeeForm() {
             className="btn btn-primary ms-2"
             type="submit"
             onClick={
-              selectedEmployee === undefined ? handleCreateEmployee : () => {}
+              selectedEmployee === undefined
+                ? handleCreateEmployee
+                : handleEditEmployee
             }
           >
             {selectedEmployee === undefined ? "Create" : `Edit`}

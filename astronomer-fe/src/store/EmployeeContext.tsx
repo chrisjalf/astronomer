@@ -25,16 +25,20 @@ export const EmployeeContext = createContext<EmployeeContextType>({
 
 export function EmployeeContextProvider({ children }: { children: ReactNode }) {
   const [employees, setEmployees] = useState<Employee[]>([]);
+
+  // EmployeeList
   const [isFetchingEmployees, setIsFetchingEmployees] = useState(false);
   const [showFetchEmployeesToast, setShowFetchEmployeesToast] = useState(false);
   const [fetchEmployeesToast, setFetchEmployeesToast] = useState<
     FetchEmployeesToast | undefined
   >(undefined);
+
+  // EmployeeForm
   const [selectedEmployee, setSelectedEmployee] = useState<
     Employee | undefined
   >(undefined);
 
-  // api call: get all employees
+  // get all employees api
   async function getEmployees() {
     const { EmployeeService } = api;
 

@@ -42,6 +42,8 @@ export type FetchEmployeesToast = EmployeeToast;
 
 export type DeleteEmployeeToast = EmployeeToast;
 
+export type EditEmployeeToast = EmployeeToast;
+
 export type CreateEmployeeToast = EmployeeToast;
 
 export type EmployeeContextType = {

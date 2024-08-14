@@ -14,6 +14,8 @@ import {
   FetchEmployeesToast,
   DeleteEmployeeToast,
   CreateEmployeeToast,
+  UpdateEmployeeRequest,
+  EditEmployeeToast,
 } from "../types/index";
 import { createPortal } from "react-dom";
 import { Toast, ToastContainer } from "react-bootstrap";
@@ -27,6 +29,7 @@ export const EmployeeContext = createContext<EmployeeContextType>({
 
   createEmployee: () => {},
   selectEmployee: () => {},
+  editEmployee: () => {},
   deleteEmployee: () => {},
 });
 
@@ -41,6 +44,10 @@ export function EmployeeContextProvider({ children }: { children: ReactNode }) {
   const [showDeleteEmployeeToast, setShowDeleteEmployeeToast] = useState(false);
   const [deleteEmployeeToast, setDeleteEmployeeToast] =
     useState<DeleteEmployeeToast>({ title: "", message: "" });
+  const [showEditEmployeeToast, setShowEditEmployeeToast] = useState(false);
+  const [editEmployeeToast, setEditEmployeeToast] = useState<EditEmployeeToast>(
+    { title: "", message: "" }
+  );
 
   // EmployeeForm states
   const [selectedEmployee, setSelectedEmployee] = useState<
@@ -104,6 +111,34 @@ export function EmployeeContextProvider({ children }: { children: ReactNode }) {
     setSelectedEmployee(employee);
   }
 
+  const editEmployee = useCallback(
+    async function editEmployee(employee: UpdateEmployeeRequest) {
+      const { EmployeeService } = api;
+
+      try {
+        // delete employee api
+        await EmployeeService.update(employee);
+
+        getEmployees();
+
+        if (selectedEmployee !== undefined) setSelectedEmployee(undefined);
+      } catch (error) {
+        let message = "";
+        if (error instanceof Error) message = error.message;
+        else message = String(error);
+
+        if (selectedEmployee !== undefined) setSelectedEmployee(undefined);
+
+        setShowEditEmployeeToast(true);
+        setEditEmployeeToast({
+          title: "Error",
+          message,
+        });
+      }
+    },
+    [selectedEmployee]
+  );
+
   const deleteEmployee = useCallback(
     async function deleteEmployee(id: string) {
       const { EmployeeService } = api;
@@ -140,6 +175,11 @@ export function EmployeeContextProvider({ children }: { children: ReactNode }) {
     setDeleteEmployeeToast({ title: "", message: "" });
   }
 
+  function resetEditEmployeeToast() {
+    setShowEditEmployeeToast(false);
+    setEditEmployeeToast({ title: "", message: "" });
+  }
+
   function resetCreateEmployeeToast() {
     setShowCreateEmployeeToast(false);
     setCreateEmployeeToast({ title: "", message: "" });
@@ -151,13 +191,11 @@ export function EmployeeContextProvider({ children }: { children: ReactNode }) {
     isFetchingEmployees: isFetchingEmployees,
 
     selectedEmployee: selectedEmployee,
-    showCreateEmployeeToast: showCreateEmployeeToast,
-    createEmployeeToast: createEmployeeToast,
 
     createEmployee: createEmployee,
     selectEmployee: selectEmployee,
+    editEmployee: editEmployee,
     deleteEmployee: deleteEmployee,
-    resetCreateEmployeeToast: resetCreateEmployeeToast,
   };
 
   return (
@@ -201,6 +239,27 @@ export function EmployeeContextProvider({ children }: { children: ReactNode }) {
                 <strong className="me-auto">{deleteEmployeeToast.title}</strong>
               </Toast.Header>
               <Toast.Body>{deleteEmployeeToast.message}</Toast.Body>
+            </Toast>
+          </ToastContainer>,
+          document.body
+        )}
+        {/* Toast for failing to edit employee */}
+        {createPortal(
+          <ToastContainer
+            className="p-3"
+            position={"top-end"}
+            style={{ zIndex: 1 }}
+          >
+            <Toast
+              show={showEditEmployeeToast}
+              onClose={resetEditEmployeeToast}
+              delay={3000}
+              autohide
+            >
+              <Toast.Header>
+                <strong className="me-auto">{editEmployeeToast.title}</strong>
+              </Toast.Header>
+              <Toast.Body>{editEmployeeToast.message}</Toast.Body>
             </Toast>
           </ToastContainer>,
           document.body

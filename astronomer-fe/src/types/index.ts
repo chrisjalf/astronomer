@@ -5,6 +5,7 @@ import {
   EmployeeContextType,
   FetchEmployeesToast,
   DeleteEmployeeToast,
+  EditEmployeeToast,
   CreateEmployeeToast,
 } from "./Employee";
 import { EmployeeFormError } from "./Error";
@@ -16,6 +17,7 @@ export type {
   EmployeeContextType,
   FetchEmployeesToast,
   DeleteEmployeeToast,
+  EditEmployeeToast,
   CreateEmployeeToast,
   EmployeeFormError,
 };

@@ -21,11 +21,19 @@ export type Employee = {
   photo?: string;
 };
 
+export type FetchEmployeesToast = {
+  title: string;
+  message: string;
+};
+
 export type EmployeeContextType = {
   employees: Employee[];
+  isFetchingEmployees: boolean;
+  showFetchEmployeesToast: boolean;
+  fetchEmployeesToast?: FetchEmployeesToast;
   selectedEmployee?: Employee;
-  setEmployees: (employees: Employee[]) => void;
   createEmployee: (employee: Employee) => void;
   selectEmployee: (employee?: Employee) => void;
   deleteEmployee: (employee: Employee) => void;
+  resetFetchEmployeesToast: () => void;
 };

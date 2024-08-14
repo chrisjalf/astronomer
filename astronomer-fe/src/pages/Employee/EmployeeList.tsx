@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { createPortal } from "react-dom";
 import { Toast, ToastContainer } from "react-bootstrap";
 
@@ -6,47 +6,18 @@ import Modal from "../../components/Modal/Modal";
 import ActionableModal from "../../components/ActionableModal/ActionableModal";
 
 import { EmployeeContext } from "../../store/index";
-import api from "../../api/index";
-import { Employee } from "../../types";
 
 export default function EmployeeList() {
-  const { employees, setEmployees, selectEmployee, deleteEmployee } =
-    useContext(EmployeeContext);
-
-  const [isFetchingEmployees, setIsFetchingEmployees] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastTitle, setToastTitle] = useState("");
-  const [toastMessage, setToastMessage] = useState("");
-
-  useEffect(() => {
-    async function getEmployees() {
-      const { EmployeeService } = api;
-
-      try {
-        setIsFetchingEmployees(true);
-        const emps: Employee[] = await EmployeeService.all();
-        setIsFetchingEmployees(false);
-        setEmployees(emps);
-      } catch (error) {
-        let message = "";
-        if (error instanceof Error) message = error.message;
-        else message = String(error);
-
-        setIsFetchingEmployees(false);
-        setShowToast(true);
-        setToastTitle("Error");
-        setToastMessage(message);
-      }
-    }
-
-    getEmployees();
-  }, [setEmployees]);
-
-  function resetToast() {
-    setShowToast(false);
-    setToastTitle("");
-    setToastMessage("");
-  }
+  const {
+    employees,
+    isFetchingEmployees,
+    showFetchEmployeesToast,
+    fetchEmployeesToast,
+    //setEmployees,
+    selectEmployee,
+    deleteEmployee,
+    resetFetchEmployeesToast,
+  } = useContext(EmployeeContext);
 
   return (
     <div className="container my-5">
@@ -56,11 +27,20 @@ export default function EmployeeList() {
           position={"top-end"}
           style={{ zIndex: 1 }}
         >
-          <Toast show={showToast} onClose={resetToast} delay={3000} autohide>
+          <Toast
+            show={showFetchEmployeesToast}
+            onClose={resetFetchEmployeesToast}
+            delay={3000}
+            autohide
+          >
             <Toast.Header>
-              <strong className="me-auto">{toastTitle}</strong>
+              <strong className="me-auto">
+                {fetchEmployeesToast?.title ?? "Error"}
+              </strong>
             </Toast.Header>
-            <Toast.Body>{toastMessage}</Toast.Body>
+            <Toast.Body>
+              {fetchEmployeesToast?.message ?? "Something went wrong"}
+            </Toast.Body>
           </Toast>
         </ToastContainer>,
         document.body

@@ -1,29 +1,65 @@
-import { createContext, ReactNode, useCallback, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { EmployeeContextType } from "../types/index";
 
 import { Employee } from "../types/index";
+import api from "../api";
+import { FetchEmployeesToast } from "../types/Employee";
 
 export const EmployeeContext = createContext<EmployeeContextType>({
   employees: [],
+  isFetchingEmployees: false,
+  showFetchEmployeesToast: false,
+  fetchEmployeesToast: undefined,
   selectedEmployee: undefined,
-  setEmployees: () => {},
   createEmployee: () => {},
   selectEmployee: () => {},
   deleteEmployee: () => {},
+  resetFetchEmployeesToast: () => {},
 });
 
 export function EmployeeContextProvider({ children }: { children: ReactNode }) {
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [isFetchingEmployees, setIsFetchingEmployees] = useState(false);
+  const [showFetchEmployeesToast, setShowFetchEmployeesToast] = useState(false);
+  const [fetchEmployeesToast, setFetchEmployeesToast] = useState<
+    FetchEmployeesToast | undefined
+  >(undefined);
   const [selectedEmployee, setSelectedEmployee] = useState<
     Employee | undefined
   >(undefined);
 
-  const handleSetEmployees = useCallback(function handleSetEmployees(
-    employees: Employee[]
-  ) {
-    setEmployees(employees);
-  },
-  []);
+  // api call: get all employees
+  async function getEmployees() {
+    const { EmployeeService } = api;
+
+    try {
+      setIsFetchingEmployees(true);
+      const emps: Employee[] = await EmployeeService.all();
+      setIsFetchingEmployees(false);
+      setEmployees(emps);
+    } catch (error) {
+      let message = "";
+      if (error instanceof Error) message = error.message;
+      else message = String(error);
+
+      setIsFetchingEmployees(false);
+      setShowFetchEmployeesToast(true);
+      setFetchEmployeesToast({
+        title: "Error",
+        message,
+      });
+    }
+  }
+
+  useEffect(() => {
+    getEmployees();
+  }, []);
 
   const createEmployee = useCallback(function createEmployee(
     newEmployee: Employee
@@ -45,13 +81,21 @@ export function EmployeeContextProvider({ children }: { children: ReactNode }) {
     });
   }
 
+  function resetFetchEmployeesToast() {
+    setShowFetchEmployeesToast(false);
+    setFetchEmployeesToast(undefined);
+  }
+
   const employeeCtx = {
     employees: employees,
+    isFetchingEmployees: isFetchingEmployees,
+    showFetchEmployeesToast: showFetchEmployeesToast,
+    fetchEmployeesToast: fetchEmployeesToast,
     selectedEmployee: selectedEmployee,
-    setEmployees: handleSetEmployees,
     createEmployee: createEmployee,
     selectEmployee: selectEmployee,
     deleteEmployee: deleteEmployee,
+    resetFetchEmployeesToast: resetFetchEmployeesToast,
   };
 
   return (

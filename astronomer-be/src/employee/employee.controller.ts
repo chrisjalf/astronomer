@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Post } from "@nestjs/common";
 import { EmployeeService } from "./employee.service";
 import CreateEmployeeDto from "./dto/create-employee.dto";
 
@@ -16,5 +16,11 @@ export class EmployeeController {
   @HttpCode(200)
   async create(@Body() dto: CreateEmployeeDto) {
     return this.employeeService.create(dto);
+  }
+
+  @Delete(":id")
+  @HttpCode(200)
+  async delete(id: string) {
+    
   }
 }

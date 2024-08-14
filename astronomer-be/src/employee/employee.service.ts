@@ -29,11 +29,21 @@ export class EmployeeService {
     let employees: EmployeeDto[] =
       (await this.cacheManager.get("employees")) ?? [];
 
-    if (employees.length > 0) {
-      employees.push(formattedDto);
-    } else employees = [formattedDto];
+    if (employees.length > 0) employees.push(formattedDto);
+    else employees = [formattedDto];
 
-    await this.cacheManager.set("employees", employees, this.cacheTTLInMs);
+    this.cacheManager.set("employees", employees, this.cacheTTLInMs);
+    return {};
+  }
+
+  async delete(id: string) {
+    const employees: EmployeeDto[] =
+      (await this.cacheManager.get("employees")) ?? [];
+    const remainingEmployees = employees.filter(
+      (employee) => employee.id !== id
+    );
+
+    this.cacheManager.set("employees", remainingEmployees, this.cacheTTLInMs);
     return {};
   }
 }

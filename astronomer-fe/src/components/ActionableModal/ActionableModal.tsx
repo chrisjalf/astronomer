@@ -1,4 +1,5 @@
 type ModalProps = {
+  id: string;
   title: string;
   body: string;
   closeText: string;
@@ -10,7 +11,7 @@ export default function ActionableModal(props: ModalProps) {
   return (
     <div
       className="modal fade"
-      id="deleteEmployeeModal"
+      id={props.id}
       tabIndex={-1}
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"

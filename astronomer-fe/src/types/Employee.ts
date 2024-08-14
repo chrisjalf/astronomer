@@ -37,6 +37,6 @@ export type EmployeeContextType = {
 
   createEmployee: (employee: EmployeeRequest) => void;
   selectEmployee: (employee?: Employee) => void;
-  deleteEmployee: (employee: Employee) => void;
+  deleteEmployee: (id: string) => void;
   resetFetchEmployeesToast: () => void;
 };

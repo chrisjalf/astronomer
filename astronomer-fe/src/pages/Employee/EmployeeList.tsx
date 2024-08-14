@@ -13,7 +13,6 @@ export default function EmployeeList() {
     isFetchingEmployees,
     showFetchEmployeesToast,
     fetchEmployeesToast,
-    //setEmployees,
     selectEmployee,
     deleteEmployee,
     resetFetchEmployeesToast,
@@ -91,7 +90,7 @@ export default function EmployeeList() {
                         type="button"
                         className="btn btn-danger"
                         data-bs-toggle="modal"
-                        data-bs-target="#deleteEmployeeModal"
+                        data-bs-target={`#deleteEmployeeModal-${index}`}
                       >
                         Delete
                       </button>
@@ -120,11 +119,12 @@ export default function EmployeeList() {
                         </dl>
                       </Modal>
                       <ActionableModal
+                        id={`deleteEmployeeModal-${index}`}
                         title={`Deleting Employee (${employee.name})`}
                         body={"This action cannot be undone. Proceed?"}
                         closeText={"Close"}
                         confirmText={"Confirm"}
-                        confirm={() => deleteEmployee(employee)}
+                        confirm={() => deleteEmployee(employee.id)}
                       />
                     </div>
                   </td>

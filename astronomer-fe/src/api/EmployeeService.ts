@@ -24,3 +24,16 @@ export const create = async (employee: EmployeeRequest) => {
 
   if (!response.ok) throw new Error("Failed to create employee");
 };
+
+export const del = async (id: string) => {
+  const url = `${apiBaseUrl}/${service}/${id}`;
+
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) throw new Error("Failed to delete employee");
+};

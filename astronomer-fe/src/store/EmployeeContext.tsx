@@ -76,7 +76,7 @@ export function EmployeeContextProvider({ children }: { children: ReactNode }) {
     try {
       // create employee api
       await EmployeeService.create(employee);
-      await getEmployees();
+      getEmployees();
     } catch (error) {
       let message = "";
       if (error instanceof Error) message = error.message;
@@ -91,11 +91,21 @@ export function EmployeeContextProvider({ children }: { children: ReactNode }) {
     setSelectedEmployee(employee);
   }
 
-  function deleteEmployee(employee: Employee) {
-    setEmployees((prevEmployees) => {
-      return [...prevEmployees.filter((emp) => emp.name !== employee.name)];
-    });
-  }
+  const deleteEmployee = useCallback(async function deleteEmployee(id: string) {
+    const { EmployeeService } = api;
+
+    try {
+      // delete employee api
+      await EmployeeService.del(id);
+      getEmployees();
+    } catch (error) {
+      let message = "";
+      if (error instanceof Error) message = error.message;
+      else message = String(error);
+
+      console.log(message);
+    }
+  }, []);
 
   function resetFetchEmployeesToast() {
     setShowFetchEmployeesToast(false);

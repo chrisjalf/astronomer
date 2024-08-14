@@ -1,6 +1,6 @@
 import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 
-import { validateEmail } from "../../util";
+import { validateEmail, validateNumber } from "../../util";
 import { EmployeeContext } from "../../store/index";
 import { EmployeeFormError } from "../../types/index";
 import { EmployeeRequest, UpdateEmployeeRequest } from "../../types/Employee";
@@ -73,8 +73,11 @@ export default function EmployeeForm() {
         break;
       }
       case "number": {
-        if (employeeNumberRef?.current?.value === "")
-          errorMessage = "Number is required";
+        const employeeNumber = employeeNumberRef?.current?.value ?? "";
+        if (employeeNumber === "") errorMessage = "Number is required";
+        else if (!validateNumber(employeeNumber))
+          errorMessage =
+            "Number is invalid, must 10-11 of numerical characters";
         else errorMessage = undefined;
 
         break;
@@ -117,8 +120,10 @@ export default function EmployeeForm() {
       error["department"] = "Department is required";
     else error["department"] = undefined;
 
-    if (employeeNumberRef?.current?.value === "")
-      error["number"] = "Number is required";
+    const employeeNumber = employeeNumberRef?.current?.value ?? "";
+    if (employeeNumber === "") error["number"] = "Number is required";
+    else if (!validateNumber(employeeNumber))
+      error["number"] = "Number is invalid, must 10-11 of numerical characters";
     else error["number"] = undefined;
 
     const email = employeeEmailRef?.current?.value ?? "";
@@ -338,11 +343,12 @@ export default function EmployeeForm() {
           <div className="mb-3">
             <label className="form-label">Number</label>
             <input
-              type="number"
+              type="text"
               className={`form-control ${employeeError.number && "is-invalid"}`}
               onFocus={() => validateEmployeeInput("number")}
               onChange={() => validateEmployeeInput("number")}
               ref={employeeNumberRef}
+              maxLength={11}
             />
             {employeeError.number && (
               <div className="invalid-feedback">{employeeError.number}</div>

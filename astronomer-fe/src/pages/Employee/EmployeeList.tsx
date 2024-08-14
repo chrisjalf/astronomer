@@ -42,7 +42,7 @@ export default function EmployeeList() {
                         type="button"
                         className="btn btn-primary"
                         data-bs-toggle="modal"
-                        data-bs-target="#employeeModal"
+                        data-bs-target={`#employeeModal-${index}`}
                       >
                         View
                       </button>
@@ -61,8 +61,23 @@ export default function EmployeeList() {
                       >
                         Delete
                       </button>
-                      <Modal title={"View Employee"} closeText={"Close"}>
+                      <Modal
+                        id={`employeeModal-${index}`}
+                        title={"View Employee"}
+                        closeText={"Close"}
+                      >
                         <dl className="row mb-0">
+                          {employee.photo && (
+                            <div className="col-sm-12 mb-3">
+                              <img
+                                src={employee.photo}
+                                className="img-thumbnail mx-auto d-block"
+                                style={{ maxWidth: "350px" }}
+                                alt="employee-image"
+                              ></img>
+                            </div>
+                          )}
+
                           <dt className="col-sm-3">Name</dt>
                           <dd className="col-sm-9">{employee.name}</dd>
 

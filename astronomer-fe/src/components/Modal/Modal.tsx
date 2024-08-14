@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 
 type ModalProps = {
+  id: string;
   title: string;
   closeText: string;
   children: ReactNode;
@@ -12,7 +13,7 @@ export default function Modal(props: ModalProps) {
   return (
     <div
       className="modal fade"
-      id="employeeModal"
+      id={props.id}
       tabIndex={-1}
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
